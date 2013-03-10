@@ -20,6 +20,9 @@ class MainWindow : public QMainWindow
 		~MainWindow();
 		void paint(QPainter &painter);
 
+	public slots:
+		void saveSvg();
+
 	protected:
 		void changeEvent(QEvent *e);
 		void paintEvent ( QPaintEvent * event );
@@ -54,9 +57,13 @@ class MainWindow : public QMainWindow
 			this->repaint();
 		}
 
+	private slots:
+		void on_actionExport_to_SVG_triggered();
+
 	private:
 		Ui::MainWindow *ui;
 		Polygon poly;
+		QString path;
 };
 
 #endif // MAINWINDOW_H

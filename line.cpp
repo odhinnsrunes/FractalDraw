@@ -58,8 +58,8 @@ QPolygonF Line::polyLine() const
 	qsrand(1234);
 	qsrand(m_seed);
 	unsigned int m_iterations = (unsigned int)(qSqrt(distance(m_start, m_end)) / 2.0);
-	if(m_iterations > 12)
-		m_iterations = 12;
+	if(m_iterations > 10)
+		m_iterations = 10;
 	for(unsigned int i = 0; i < m_iterations; i++){
 		for(unsigned int j = ret.count() - 1; j > 0; j--){
 			QPointF point1 = ret.at(j - 1);
@@ -81,6 +81,11 @@ QPolygonF Line::polyLine() const
 	ret = matrix1.map(ret);
 	ret = matrix2.map(ret);
 	return ret;
+}
+
+QRectF Line::boundingRect()
+{
+	return polyLine().boundingRect();
 }
 
 void Line::paint(QPainter &painter) const

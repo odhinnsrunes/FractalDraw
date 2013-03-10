@@ -41,6 +41,8 @@ class Line : public QObject
 
 		QPolygonF polyLine() const;
 
+		QRectF boundingRect();
+
 		void paint(QPainter & painter) const ;
 
 	signals:

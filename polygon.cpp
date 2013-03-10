@@ -39,3 +39,22 @@ void Polygon::setColor(QColor color)
 	}
 	emit colorChanged();
 }
+
+QRectF Polygon::boundingRect()
+{
+	if(lines.count() == 0)
+		return QRect(0.0, 0.0, 0.0, 0.0);
+	QRectF ret(1000000.0, 1000000.0, -1000001.0, -1000001.0);
+	for(int i = 0; i < lines.count(); i++){
+		QRectF thisRect = lines[i].boundingRect();
+		if(ret.top() > thisRect.top())
+			ret.setTop(thisRect.top());
+		if(ret.left() > thisRect.left())
+			ret.setLeft(thisRect.left());
+		if(ret.bottom() < thisRect.bottom())
+			ret.setBottom(thisRect.bottom());
+		if(ret.right() < thisRect.right())
+			ret.setRight(thisRect.right());
+	}
+	return ret;
+}

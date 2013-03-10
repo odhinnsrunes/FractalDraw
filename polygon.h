@@ -19,6 +19,8 @@ class Polygon : public QObject
 			}
 		}
 
+		QRectF boundingRect();
+
 		void paint(QPainter & painter);
 		QColor color() const { return m_color; }
 
