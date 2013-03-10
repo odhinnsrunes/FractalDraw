@@ -26,8 +26,15 @@ void Polygon::setEndPoint(QPointF newPoint)
 
 void Polygon::paint(QPainter &painter)
 {
+	QPolygonF pLine;
 	for(int i = 0; i < lines.count(); i++){
-		lines.at(i).paint(painter);
+		pLine << lines[i].polyLine();
+	}
+	painter.setPen(QPen(m_color, 1, Qt::SolidLine));
+	if(complete()){
+		painter.drawPolygon(pLine);
+	} else {
+		painter.drawPolyline(pLine);
 	}
 }
 

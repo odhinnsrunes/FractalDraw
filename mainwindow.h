@@ -38,6 +38,7 @@ class MainWindow : public QMainWindow
 		}
 		void mousePressEvent ( QMouseEvent * event )
 		{
+			qDebug() << hasMouseTracking();
 			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
 				poly.setEndPoint(poly.startPoint());
 			} else {
@@ -56,6 +57,8 @@ class MainWindow : public QMainWindow
 
 			this->repaint();
 		}
+
+		void keyPressEvent(QKeyEvent * event);
 
 	private slots:
 		void on_actionExport_to_SVG_triggered();

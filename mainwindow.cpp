@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 	poly.setColor(QColor(255, 0, 255));
 	setMouseTracking(false);
+	setAcceptDrops(false);
 	setCursor(QCursor(Qt::CrossCursor));
 }
 
@@ -81,4 +82,20 @@ void MainWindow::saveSvg()
 void MainWindow::on_actionExport_to_SVG_triggered()
 {
 	saveSvg();
+}
+
+void MainWindow::keyPressEvent(QKeyEvent * event)
+{
+	switch(event->key()){
+		case Qt::Key_Z:
+			if((event->modifiers() & Qt::ControlModifier)){
+				poly.undo();
+				repaint();
+				event->accept();
+				qDebug() << "Undo";
+				return;
+			}
+			break;
+	}
+	QWidget::keyPressEvent(event);
 }

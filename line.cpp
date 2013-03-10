@@ -57,16 +57,23 @@ QPolygonF Line::polyLine() const
 	//ret.setPoints(2, 0, 0, distance(m_start, m_end), 0);
 	qsrand(1234);
 	qsrand(m_seed);
-	unsigned int m_iterations = (unsigned int)(qSqrt(distance(m_start, m_end)) / 2.0);
-	if(m_iterations > 10)
-		m_iterations = 10;
+	for(int i = 0; i < qrand() % 127; i++){
+		qrand();
+	}
+	unsigned int m_iterations = (unsigned int)(qSqrt(distance(m_start, m_end)) / 1.5);
+	if(m_iterations > 11)
+		m_iterations = 11;
 	for(unsigned int i = 0; i < m_iterations; i++){
 		for(unsigned int j = ret.count() - 1; j > 0; j--){
 			QPointF point1 = ret.at(j - 1);
 			QPointF point2 = ret.at(j);
 			QPointF point3 = midPoint(point1, point2);
-			qreal dist = distance(point1, point2) / 2;
-			qreal offset = (qrand() * (dist / (qreal)RAND_MAX)) - (dist / 2.0);
+			qreal dist = distance(point1, point2) / 4;
+			qreal min = -dist;
+			qreal max = dist;
+			qreal offset = -1.0 + (((qreal)qrand() / (qreal)RAND_MAX) * 2.0);
+			offset *= dist;
+			qDebug() << offset;
 			point3.setY(point3.y() + offset);
 			ret.insert(j, point3);
 		}
