@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    line.cpp
+    line.cpp \
+    polygon.cpp
 
 HEADERS  += mainwindow.h \
-    line.h
+    line.h \
+    polygon.h
 
 FORMS    += mainwindow.ui

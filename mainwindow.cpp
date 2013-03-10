@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	line->setIterations(8);
 	line->setStart(QPoint(20, 20));
 	line->setEnd(QPoint(100, 100));
+	setCursor(QCursor(Qt::CrossCursor));
 }
 
 MainWindow::~MainWindow()
@@ -31,20 +32,21 @@ void MainWindow::changeEvent(QEvent *e)
 	}
 }
 
-void MainWindow::paintEvent(QPaintEvent *event)
+void MainWindow::paint(QPainter &painter)
 {
-	Q_UNUSED(event);
 	static bool bDrawing = false;
 	if(bDrawing)
 		return;
 	bDrawing = true;
-	QPainter painter(this);
-	QMatrix matrix;
-//	matrix.scale(5, 5);
-	matrix.translate(10, 10);
-	QPolygonF pLine = line->polyLine();
-	painter.setMatrix(matrix);
-	painter.setPen(QPen(Qt::black, 1, Qt::SolidLine));
-	painter.drawPolyline(pLine);
+
+	line->paint(painter);
+
 	bDrawing = false;
+}
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+	Q_UNUSED(event);
+	QPainter painter(this);
+	paint(painter);
 }

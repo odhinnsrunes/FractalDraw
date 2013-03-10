@@ -3,13 +3,34 @@
 #include <QMatrix>
 #include <QDebug>
 
-Line::Line(QObject *parent) :
+Line::Line(QObject *parent, QColor newColor, unsigned int uiSeed) :
 	QObject(parent)
 {
-	m_seed = time(0);
+	m_seed = uiSeed;
 	m_iterations = 0;
 	m_start = QPointF(0, 0);
 	m_end = QPointF(0, 10);
+	m_color = newColor;
+}
+
+Line::Line(QObject *parent, Line & oldLine) :
+	QObject(parent)
+{
+	m_seed = oldLine.seed();
+	m_iterations = oldLine.iterations();
+	m_start = oldLine.start();
+	m_end = oldLine.end();
+	m_color = oldLine.color();
+}
+
+Line::Line(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor, unsigned int uiSeed):
+	QObject(parent)
+{
+	m_seed = uiSeed;
+	m_iterations = 0;
+	m_start = newStart;
+	m_end = newEnd;
+	m_color = newColor;
 }
 
 QPointF midPoint(QPointF point1, QPointF point2)
@@ -63,4 +84,11 @@ QPolygonF Line::polyLine()
 	ret = matrix1.map(ret);
 	ret = matrix2.map(ret);
 	return ret;
+}
+
+void Line::paint(QPainter &painter)
+{
+	QPolygonF pLine = polyLine();
+	painter.setPen(QPen(Qt::black, 1, Qt::SolidLine));
+	painter.drawPolyline(pLine);
 }
