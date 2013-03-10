@@ -57,7 +57,7 @@ QPolygonF Line::polyLine() const
 	//ret.setPoints(2, 0, 0, distance(m_start, m_end), 0);
 	qsrand(1234);
 	qsrand(m_seed);
-	for(int i = 0; i < qrand() % 127; i++){
+	for(int i = 0; i < qrand() % 127; i++){  // don't know why I have to do this, but if I don't the first offset is always positive
 		qrand();
 	}
 	unsigned int m_iterations = (unsigned int)(qSqrt(distance(m_start, m_end)) / 1.5);
