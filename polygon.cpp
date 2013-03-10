@@ -1,9 +1,41 @@
 #include "polygon.h"
 
-Polygon::Polygon(QObject *parent) :
+Polygon::Polygon(QObject *parent, QColor color, QColor bgColor) :
 	QObject(parent)
 {
-	m_color = QColor(0, 0, 0);
+	m_color = color;
+	m_fillColor = bgColor;
+}
+
+
+Polygon::Polygon(const Polygon & oldPolygon) :
+	QObject(oldPolygon.parent())
+{
+	m_color = oldPolygon.color();
+	m_fillColor = oldPolygon.fillColor();
+	for(int i = 0; i < oldPolygon.lines.count(); i++){
+		lines.append(oldPolygon.lines[i]);
+	}
+}
+
+Polygon::~Polygon()
+{
+	int c = lines.count();
+	for(int i = 0; i < c; i++){
+		lines.remove(lines.count() - 1);
+	}
+}
+
+Polygon & Polygon::operator= (const Polygon & rhs){
+	if (this == &rhs)
+		  return *this;
+	setParent(rhs.parent());
+	m_color = rhs.color();
+	m_fillColor = rhs.fillColor();
+	for(int i = 0; i < rhs.lines.count(); i++){
+		lines.append(rhs.lines[i]);
+	}
+	return *this;
 }
 
 void Polygon::addPoint(QPointF newPoint)

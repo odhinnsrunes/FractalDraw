@@ -11,7 +11,10 @@ class Polygon : public QObject
 		Q_PROPERTY(QColor fillColor READ fillColor WRITE setFillColor NOTIFY fillColorChanged)
 
 	public:
-		explicit Polygon(QObject *parent = 0);
+		explicit Polygon(QObject *parent = 0, QColor color = QColor(0, 0, 0), QColor bgColor = QColor(0,0,0));
+		explicit Polygon(const Polygon& oldLine);
+		~Polygon();
+
 		void addPoint(QPointF newPoint);
 		void setEndPoint(QPointF newPoint);
 		void undo(){
@@ -20,6 +23,8 @@ class Polygon : public QObject
 			}
 		}
 
+		Polygon & operator= (const Polygon & rhs);
+
 		QRectF boundingRect();
 
 		void paint(QPainter & painter);
@@ -27,7 +32,7 @@ class Polygon : public QObject
 		QColor fillColor() const { return m_fillColor; }
 
 		bool complete(){
-			if(lines.count()){
+			if(lines.count() > 2){
 				if(startPoint() == lines.last().end()){
 					return true;
 				}

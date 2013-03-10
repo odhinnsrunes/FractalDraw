@@ -24,11 +24,11 @@ class MainWindow : public QMainWindow
 	public slots:
 		void saveSvg();
 		void setColor(QColor color){
-			poly.setColor(color);
+			polys.last()->setColor(color);
 			repaint();
 		}
 		void setFillColor(QColor color){
-			poly.setFillColor(color);
+			polys.last()->setFillColor(color);
 			repaint();
 		}
 
@@ -42,30 +42,22 @@ class MainWindow : public QMainWindow
 		void paintEvent ( QPaintEvent * event );
 		void mouseMoveEvent ( QMouseEvent * event )
 		{
-			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
-				poly.setEndPoint(poly.startPoint());
+			if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
+				polys.last()->setEndPoint(polys.last()->startPoint());
 			} else {
-				poly.setEndPoint(QPointF(event->pos().x(), event->pos().y()));
+				polys.last()->setEndPoint(QPointF(event->pos().x(), event->pos().y()));
 			}
 
 			this->repaint();
 		}
-		void mousePressEvent ( QMouseEvent * event )
-		{
-			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
-				poly.setEndPoint(poly.startPoint());
-			} else {
-				poly.setEndPoint(QPointF(event->pos().x(), event->pos().y()));
-			}
+		void mousePressEvent ( QMouseEvent * event );
 
-			this->repaint();
-		}
 		void mouseReleaseEvent ( QMouseEvent * event )
 		{
-			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
-				poly.addPoint(poly.startPoint());
+			if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
+				polys.last()->addPoint(polys.last()->startPoint());
 			} else {
-				poly.addPoint(QPointF(event->pos().x(), event->pos().y()));
+				polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
 			}
 
 			this->repaint();
@@ -78,13 +70,17 @@ class MainWindow : public QMainWindow
 
 	private:
 		Ui::MainWindow *ui;
-		Polygon poly;
+		//Polygon poly;
+		QVector<Polygon*> polys;
 		QString path;
 
 		ColorWell * borderWell;
 		ColorWell * fillWell;
 		ColorWell * backgroundWell;
 		QColor m_BGColor;
+		QColor m_borderColor;
+		QColor m_fillColor;
+		QColor m_lineColor;
 };
 
 #endif // MAINWINDOW_H

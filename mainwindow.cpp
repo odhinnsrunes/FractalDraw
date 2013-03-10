@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	poly.setColor(QColor(255, 0, 255));
 	setMouseTracking(false);
 	setAcceptDrops(false);
 	setCursor(QCursor(Qt::CrossCursor));
@@ -33,13 +32,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->mainToolBar->addWidget(backgroundWell);
 
-	poly.setColor(borderWell->color());
-	poly.setFillColor(fillWell->color());
+//	poly.setColor(QColor(255, 0, 255));
+//	poly.setColor(borderWell->color());
+//	poly.setFillColor(fillWell->color());
 	m_BGColor = backgroundWell->color();
 
 	connect(borderWell, SIGNAL(colorChanged(QColor)), this, SLOT(setColor(QColor)));
 	connect(fillWell, SIGNAL(colorChanged(QColor)), this, SLOT(setFillColor(QColor)));
 	connect(backgroundWell, SIGNAL(colorChanged(QColor)), this, SLOT(setBGColor(QColor)));
+
+	m_borderColor = borderWell->color();
+	m_BGColor = backgroundWell->color();
+	m_fillColor = fillWell->color();
 
 	showMaximized();
 }
@@ -47,6 +51,12 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
 	delete ui;
+	int c = polys.count();
+	for(int i = 0; i < c; i++){
+		if(polys[i]){
+			delete polys[i];
+		}
+	}
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -68,7 +78,10 @@ void MainWindow::paint(QPainter &painter)
 		return;
 	bDrawing = true;
 	painter.fillRect(this->rect(), m_BGColor);
-	poly.paint(painter);
+	for(int i = 0; i < polys.count(); i++){
+		polys[i]->paint(painter);
+	}
+
 	bDrawing = false;
 }
 
@@ -92,7 +105,7 @@ void MainWindow::saveSvg()
 
 	QSvgGenerator generator;
 	generator.setFileName(path);
-	QRectF rectf = poly.boundingRect();
+	QRectF rectf = polys.last()->boundingRect();
 	QRect rect(qRound(rectf.top()), qRound(rectf.left()), qRound(rectf.width()), qRound(rectf.height()));
 	generator.setSize(QSize(rect.width(), rect.height()));
 	generator.setViewBox(rect);
@@ -115,7 +128,7 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
 	switch(event->key()){
 		case Qt::Key_Z:
 			if((event->modifiers() & Qt::ControlModifier)){
-				poly.undo();
+				polys.last()->undo();
 				repaint();
 				event->accept();
 				qDebug() << "Undo";
@@ -124,4 +137,26 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
 			break;
 	}
 	QWidget::keyPressEvent(event);
+}
+
+void MainWindow::mousePressEvent ( QMouseEvent * event )
+{
+	if(polys.count() == 0){
+		Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
+		polys.append(newPoly);
+		polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
+	} else {
+		if(polys.last()->complete()){
+			Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
+			polys.append(newPoly);
+			polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
+		}
+	}
+	if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
+		polys.last()->setEndPoint(polys.last()->startPoint());
+	} else {
+		polys.last()->setEndPoint(QPointF(event->pos().x(), event->pos().y()));
+	}
+
+	this->repaint();
 }
