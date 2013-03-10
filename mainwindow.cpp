@@ -15,19 +15,19 @@ MainWindow::MainWindow(QWidget *parent) :
 	setAcceptDrops(false);
 	setCursor(QCursor(Qt::CrossCursor));
 
-	borderWell = new ColorWell(ui->mainToolBar);
+	borderWell = new ColorWell(ui->mainToolBar, tr("Border"));
 	borderWell->resize(64, 64);
-	borderWell->setColor(QColor(32, 64, 32));
+	borderWell->setColor(QColor(255, 240, 168));
 
 	ui->mainToolBar->addWidget(borderWell);
 
-	fillWell = new ColorWell(ui->mainToolBar);
+	fillWell = new ColorWell(ui->mainToolBar, tr("Fill"));
 	fillWell->resize(64, 64);
 	fillWell->setColor(QColor(64, 128, 64));
 
 	ui->mainToolBar->addWidget(fillWell);
 
-	backgroundWell = new ColorWell(ui->mainToolBar);
+	backgroundWell = new ColorWell(ui->mainToolBar, tr("Back"));
 	backgroundWell->resize(64, 64);
 	backgroundWell->setColor(QColor(0, 64, 128));
 
@@ -40,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(borderWell, SIGNAL(colorChanged(QColor)), this, SLOT(setColor(QColor)));
 	connect(fillWell, SIGNAL(colorChanged(QColor)), this, SLOT(setFillColor(QColor)));
 	connect(backgroundWell, SIGNAL(colorChanged(QColor)), this, SLOT(setBGColor(QColor)));
+
+	showMaximized();
 }
 
 MainWindow::~MainWindow()

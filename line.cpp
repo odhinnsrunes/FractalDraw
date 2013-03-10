@@ -73,7 +73,6 @@ QPolygonF Line::polyLine() const
 			qreal max = dist;
 			qreal offset = -1.0 + (((qreal)qrand() / (qreal)RAND_MAX) * 2.0);
 			offset *= dist;
-			qDebug() << offset;
 			point3.setY(point3.y() + offset);
 			ret.insert(j, point3);
 		}
