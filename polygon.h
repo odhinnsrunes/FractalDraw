@@ -8,6 +8,7 @@ class Polygon : public QObject
 {
 		Q_OBJECT
 		Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+		Q_PROPERTY(QColor fillColor READ fillColor WRITE setFillColor NOTIFY fillColorChanged)
 
 	public:
 		explicit Polygon(QObject *parent = 0);
@@ -23,6 +24,7 @@ class Polygon : public QObject
 
 		void paint(QPainter & painter);
 		QColor color() const { return m_color; }
+		QColor fillColor() const { return m_fillColor; }
 
 		bool complete(){
 			if(lines.count()){
@@ -41,16 +43,22 @@ class Polygon : public QObject
 		}
 
 	signals:
-		void colorChanged();
+		void colorChanged(QColor);
+		void fillColorChanged(QColor);
 
 	public slots:
 		void setColor(QColor color);
+		void setFillColor(QColor color){
+			m_fillColor = color;
+			emit fillColorChanged(color);
+		}
 
 	private:
 		QVector<Line> lines;
 
 		QColor m_color;
-		
+		QColor m_fillColor;
+
 };
 
 #endif // POLYGON_H

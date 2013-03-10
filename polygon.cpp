@@ -10,7 +10,7 @@ void Polygon::addPoint(QPointF newPoint)
 {
 	Line newLine(this, m_color);
 	newLine.setStart(newPoint);
-	newLine.setEnd(QPointF(newPoint.x() + 1.0, newPoint.y() + 1.0));
+	newLine.setEnd(QPointF(newPoint.x() + 0.0, newPoint.y() + 0.0));
 	if(lines.count()){
 		lines.last().setEnd(newPoint);
 	}
@@ -32,6 +32,7 @@ void Polygon::paint(QPainter &painter)
 	}
 	painter.setPen(QPen(m_color, 1, Qt::SolidLine));
 	if(complete()){
+		painter.setBrush(QBrush(m_fillColor, Qt::SolidPattern));
 		painter.drawPolygon(pLine);
 	} else {
 		painter.drawPolyline(pLine);
@@ -44,7 +45,7 @@ void Polygon::setColor(QColor color)
 	for(int i = 0; i < lines.count(); i++){
 		lines[i].setColor(m_color);
 	}
-	emit colorChanged();
+	emit colorChanged(color);
 }
 
 QRectF Polygon::boundingRect()

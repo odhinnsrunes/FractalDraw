@@ -46,16 +46,16 @@ class Line : public QObject
 		void paint(QPainter & painter) const ;
 
 	signals:
-		void seedChanged();
-		void startChanged();
-		void endChanged();
-		void colorChanged();
+		void seedChanged(unsigned int);
+		void startChanged(QPointF);
+		void endChanged(QPointF);
+		void colorChanged(QColor);
 
 	public slots:
-		void setSeed(unsigned int uiNew) { m_seed = uiNew; emit seedChanged(); }
-		void setStart(QPointF pNew) { m_start = pNew; emit startChanged(); }
-		void setEnd(QPointF pNew) { m_end = pNew; emit endChanged(); }
-		void setColor(QColor pNew) { m_color = pNew; emit colorChanged(); }
+		void setSeed(unsigned int uiNew) { m_seed = uiNew; emit seedChanged(uiNew); }
+		void setStart(QPointF pNew) { m_start = pNew; emit startChanged(pNew); }
+		void setEnd(QPointF pNew) { m_end = pNew; emit endChanged(pNew); }
+		void setColor(QColor pNew) { m_color = pNew; emit colorChanged(pNew); }
 
 	private:
 		unsigned int m_seed;

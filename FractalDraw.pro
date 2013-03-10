@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     line.cpp \
-    polygon.cpp
+    polygon.cpp \
+    colorwell.cpp
 
 HEADERS  += mainwindow.h \
     line.h \
-    polygon.h
+    polygon.h \
+    colorwell.h
 
 FORMS    += mainwindow.ui

@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include "polygon.h"
+#include "colorwell.h"
 
 namespace Ui {
 class MainWindow;
@@ -22,6 +23,14 @@ class MainWindow : public QMainWindow
 
 	public slots:
 		void saveSvg();
+		void setColor(QColor color){
+			poly.setColor(color);
+			repaint();
+		}
+		void setFillColor(QColor color){
+			poly.setFillColor(color);
+			repaint();
+		}
 
 	protected:
 		void changeEvent(QEvent *e);
@@ -38,7 +47,6 @@ class MainWindow : public QMainWindow
 		}
 		void mousePressEvent ( QMouseEvent * event )
 		{
-			qDebug() << hasMouseTracking();
 			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
 				poly.setEndPoint(poly.startPoint());
 			} else {
@@ -67,6 +75,9 @@ class MainWindow : public QMainWindow
 		Ui::MainWindow *ui;
 		Polygon poly;
 		QString path;
+
+		ColorWell * borderWell;
+		ColorWell * fillWell;
 };
 
 #endif // MAINWINDOW_H

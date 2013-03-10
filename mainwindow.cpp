@@ -14,6 +14,24 @@ MainWindow::MainWindow(QWidget *parent) :
 	setMouseTracking(false);
 	setAcceptDrops(false);
 	setCursor(QCursor(Qt::CrossCursor));
+
+	borderWell = new ColorWell(ui->mainToolBar);
+	borderWell->resize(64, 64);
+	borderWell->setColor(QColor(32, 64, 32));
+
+	ui->mainToolBar->addWidget(borderWell);
+
+	fillWell = new ColorWell(ui->mainToolBar);
+	fillWell->resize(64, 64);
+	fillWell->setColor(QColor(64, 128, 64));
+
+	ui->mainToolBar->addWidget(fillWell);
+
+	poly.setColor(borderWell->color());
+	poly.setFillColor(fillWell->color());
+
+	connect(borderWell, SIGNAL(colorChanged(QColor)), this, SLOT(setColor(QColor)));
+	connect(fillWell, SIGNAL(colorChanged(QColor)), this, SLOT(setFillColor(QColor)));
 }
 
 MainWindow::~MainWindow()
@@ -39,7 +57,7 @@ void MainWindow::paint(QPainter &painter)
 	if(bDrawing)
 		return;
 	bDrawing = true;
-
+	painter.fillRect(this->rect(), Qt::white);
 	poly.paint(painter);
 //	painter.setPen(QPen(Qt::blue, 1, Qt::DashLine));
 //	painter.drawRect(poly.boundingRect());
