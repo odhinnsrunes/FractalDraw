@@ -34,6 +34,10 @@ void MainWindow::changeEvent(QEvent *e)
 void MainWindow::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
+	static bool bDrawing = false;
+	if(bDrawing)
+		return;
+	bDrawing = true;
 	QPainter painter(this);
 	QMatrix matrix;
 //	matrix.scale(5, 5);
@@ -42,5 +46,5 @@ void MainWindow::paintEvent(QPaintEvent *event)
 	painter.setMatrix(matrix);
 	painter.setPen(QPen(Qt::black, 1, Qt::SolidLine));
 	painter.drawPolyline(pLine);
-
+	bDrawing = false;
 }

@@ -23,13 +23,11 @@ class MainWindow : public QMainWindow
 		void paintEvent ( QPaintEvent * event );
 		void mouseMoveEvent ( QMouseEvent * event )
 		{
-			qDebug() << "Move: " << event->pos();
 			line->setEnd(QPointF(event->pos().x(), event->pos().y()));
 			this->repaint();
 		}
 		void mousePressEvent ( QMouseEvent * event )
 		{
-			qDebug() << "Down: " << event->pos();
 			line->setStart(QPointF(event->pos().x(), event->pos().y()));
 			this->repaint();
 		}

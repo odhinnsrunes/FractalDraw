@@ -40,14 +40,14 @@ QPolygonF Line::polyLine()
 	qsrand(1234);
 	qsrand(m_seed);
 	m_iterations = qSqrt(distance(m_start, m_end)) / 2;
+	if(m_iterations > 10)
+		m_iterations = 10;
 	for(unsigned int i = 0; i < m_iterations; i++){
 		for(unsigned int j = ret.count() - 1; j > 0; j--){
 			QPointF point1 = ret.at(j - 1);
 			QPointF point2 = ret.at(j);
 			QPointF point3 = midPoint(point1, point2);
 			qreal dist = distance(point1, point2) / 2;
-
-
 			qreal offset = (qrand() * (dist / (qreal)RAND_MAX)) - (dist / 2.0);
 			point3.setY(point3.y() + offset);
 			ret.insert(j, point3);
