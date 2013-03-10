@@ -32,6 +32,11 @@ class MainWindow : public QMainWindow
 			repaint();
 		}
 
+		void setBGColor(QColor color){
+			m_BGColor = color;
+			repaint();
+		}
+
 	protected:
 		void changeEvent(QEvent *e);
 		void paintEvent ( QPaintEvent * event );
@@ -78,6 +83,8 @@ class MainWindow : public QMainWindow
 
 		ColorWell * borderWell;
 		ColorWell * fillWell;
+		ColorWell * backgroundWell;
+		QColor m_BGColor;
 };
 
 #endif // MAINWINDOW_H

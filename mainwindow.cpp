@@ -27,11 +27,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->mainToolBar->addWidget(fillWell);
 
+	backgroundWell = new ColorWell(ui->mainToolBar);
+	backgroundWell->resize(64, 64);
+	backgroundWell->setColor(QColor(0, 64, 128));
+
+	ui->mainToolBar->addWidget(backgroundWell);
+
 	poly.setColor(borderWell->color());
 	poly.setFillColor(fillWell->color());
+	m_BGColor = backgroundWell->color();
 
 	connect(borderWell, SIGNAL(colorChanged(QColor)), this, SLOT(setColor(QColor)));
 	connect(fillWell, SIGNAL(colorChanged(QColor)), this, SLOT(setFillColor(QColor)));
+	connect(backgroundWell, SIGNAL(colorChanged(QColor)), this, SLOT(setBGColor(QColor)));
 }
 
 MainWindow::~MainWindow()
@@ -57,10 +65,8 @@ void MainWindow::paint(QPainter &painter)
 	if(bDrawing)
 		return;
 	bDrawing = true;
-	painter.fillRect(this->rect(), Qt::white);
+	painter.fillRect(this->rect(), m_BGColor);
 	poly.paint(painter);
-//	painter.setPen(QPen(Qt::blue, 1, Qt::DashLine));
-//	painter.drawRect(poly.boundingRect());
 	bDrawing = false;
 }
 
