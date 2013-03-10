@@ -5,6 +5,7 @@
 #include "line.h"
 #include <QDebug>
 #include <QMouseEvent>
+#include "polygon.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,18 +25,38 @@ class MainWindow : public QMainWindow
 		void paintEvent ( QPaintEvent * event );
 		void mouseMoveEvent ( QMouseEvent * event )
 		{
-			line->setEnd(QPointF(event->pos().x(), event->pos().y()));
+			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
+				poly.setEndPoint(poly.startPoint());
+			} else {
+				poly.setEndPoint(QPointF(event->pos().x(), event->pos().y()));
+			}
+
 			this->repaint();
 		}
 		void mousePressEvent ( QMouseEvent * event )
 		{
-			line->setStart(QPointF(event->pos().x(), event->pos().y()));
+			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
+				poly.setEndPoint(poly.startPoint());
+			} else {
+				poly.setEndPoint(QPointF(event->pos().x(), event->pos().y()));
+			}
+
+			this->repaint();
+		}
+		void mouseReleaseEvent ( QMouseEvent * event )
+		{
+			if(distance(QPointF(event->pos().x(), event->pos().y()), poly.startPoint()) < 5.0){
+				poly.addPoint(poly.startPoint());
+			} else {
+				poly.addPoint(QPointF(event->pos().x(), event->pos().y()));
+			}
+
 			this->repaint();
 		}
 
 	private:
 		Ui::MainWindow *ui;
-		Line *line;
+		Polygon poly;
 };
 
 #endif // MAINWINDOW_H

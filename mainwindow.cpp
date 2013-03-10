@@ -8,10 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	line = new Line;
-	line->setIterations(8);
-	line->setStart(QPoint(20, 20));
-	line->setEnd(QPoint(100, 100));
+	poly.setColor(QColor(255, 0, 255));
+	setMouseTracking(false);
 	setCursor(QCursor(Qt::CrossCursor));
 }
 
@@ -39,7 +37,7 @@ void MainWindow::paint(QPainter &painter)
 		return;
 	bDrawing = true;
 
-	line->paint(painter);
+	poly.paint(painter);
 
 	bDrawing = false;
 }
