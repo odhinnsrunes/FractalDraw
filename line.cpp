@@ -1,7 +1,6 @@
 #include "line.h"
 #include <QDebug>
 #include <QMatrix>
-#include <QDebug>
 
 Line::Line(QObject *parent, QColor newColor, unsigned int uiSeed) :
 	QObject(parent)
@@ -81,7 +80,7 @@ QPolygonF Line::polyLine() const
 	QMatrix matrix1;
 	QMatrix matrix2;
 	qreal rot = rotation(m_start, m_end);
-	//qDebug() << rot << "\n" << m_start;
+
 	matrix1.rotate(rot);
 	matrix2.translate(m_start.x(), m_start.y());
 	ret = matrix1.map(ret);

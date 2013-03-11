@@ -45,7 +45,6 @@ class ColorWell : public QFrame
 	public slots:
 		void setColor(QColor newColor){
 			m_color = newColor;
-			qDebug() << newColor;
 			emit colorChanged(newColor);
 		}
 

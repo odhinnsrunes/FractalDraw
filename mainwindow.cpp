@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	bDrawPolys = true;
 	setMouseTracking(false);
 	setAcceptDrops(false);
 	setCursor(QCursor(Qt::CrossCursor));
@@ -32,18 +33,34 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->mainToolBar->addWidget(backgroundWell);
 
-//	poly.setColor(QColor(255, 0, 255));
-//	poly.setColor(borderWell->color());
-//	poly.setFillColor(fillWell->color());
-	m_BGColor = backgroundWell->color();
+	lineWell = new ColorWell(ui->mainToolBar, tr("Lines"));
+	lineWell->resize(64, 64);
+	lineWell->setColor(QColor(0, 64, 128));
+
+	ui->mainToolBar->addWidget(lineWell);
 
 	connect(borderWell, SIGNAL(colorChanged(QColor)), this, SLOT(setColor(QColor)));
 	connect(fillWell, SIGNAL(colorChanged(QColor)), this, SLOT(setFillColor(QColor)));
 	connect(backgroundWell, SIGNAL(colorChanged(QColor)), this, SLOT(setBGColor(QColor)));
+	connect(lineWell, SIGNAL(colorChanged(QColor)), this, SLOT(setLineColor(QColor)));
 
 	m_borderColor = borderWell->color();
 	m_BGColor = backgroundWell->color();
 	m_fillColor = fillWell->color();
+	m_lineColor = lineWell->color();
+
+	aDrawPolys = ui->mainToolBar->addAction(tr("Draw Polys"));
+	aDrawPolys->setCheckable(true);
+	aDrawPolys->setChecked(true);
+	connect(aDrawPolys, SIGNAL(toggled(bool)), this, SLOT(drawPolys(bool)));
+
+	aDrawLines = ui->mainToolBar->addAction(tr("Draw Lines"));
+	aDrawLines->setCheckable(true);
+	aDrawLines->setChecked(false);
+	connect(aDrawLines, SIGNAL(toggled(bool)), this, SLOT(drawLines(bool)));
+
+
+	this->setWindowTitle(QString("FractalDraw v%1").arg(VERSION));
 
 	showMaximized();
 }
@@ -81,7 +98,9 @@ void MainWindow::paint(QPainter &painter)
 	for(int i = 0; i < polys.count(); i++){
 		polys[i]->paint(painter);
 	}
-
+	for(int i = 0; i < lines.count(); i++){
+		lines[i]->paint(painter);
+	}
 	bDrawing = false;
 }
 
@@ -128,11 +147,19 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
 	switch(event->key()){
 		case Qt::Key_Z:
 			if((event->modifiers() & Qt::ControlModifier)){
-				polys.last()->undo();
-				repaint();
-				event->accept();
-				qDebug() << "Undo";
-				return;
+				if(bDrawPolys){
+					polys.last()->undo();
+					repaint();
+					event->accept();
+					return;
+				} else {
+					if(lines.count()){
+						delete lines.last();
+						lines.remove(lines.count() - 1);
+						repaint();
+						event->accept();
+					}
+				}
 			}
 			break;
 	}
@@ -141,22 +168,26 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
 
 void MainWindow::mousePressEvent ( QMouseEvent * event )
 {
-	if(polys.count() == 0){
-		Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
-		polys.append(newPoly);
-		polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
-	} else {
-		if(polys.last()->complete()){
+	if(bDrawPolys){
+		if(polys.count() == 0){
 			Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
 			polys.append(newPoly);
 			polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
+		} else {
+			if(polys.last()->complete()){
+				Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
+				polys.append(newPoly);
+				polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
+			}
 		}
-	}
-	if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
-		polys.last()->setEndPoint(polys.last()->startPoint());
+		if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
+			polys.last()->setEndPoint(polys.last()->startPoint());
+		} else {
+			polys.last()->setEndPoint(QPointF(event->pos().x(), event->pos().y()));
+		}
 	} else {
-		polys.last()->setEndPoint(QPointF(event->pos().x(), event->pos().y()));
+		Line * newLine = new Line(this, QPointF(event->pos().x(), event->pos().y()), QPointF(event->pos().x(), event->pos().y()), m_lineColor);
+		lines.append(newLine);
 	}
-
 	this->repaint();
 }
