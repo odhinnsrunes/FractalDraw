@@ -10,6 +10,7 @@
 #include "polygon.h"
 #include "colorwell.h"
 #include <QAction>
+#include <QCheckBox>
 
 namespace Ui {
 class MainWindow;
@@ -83,6 +84,8 @@ class MainWindow : public QMainWindow
 
 	private slots:
 		void on_actionExport_to_SVG_triggered();
+		void fillPolysChanged(bool bSetTo);
+		void showBackgroundChanged(bool bSetTo);
 
 	private:
 		Ui::MainWindow *ui;
@@ -103,6 +106,10 @@ class MainWindow : public QMainWindow
 
 		QAction * aDrawPolys;
 		QAction * aDrawLines;
+
+		QCheckBox * chShowBackground;
+		QCheckBox * chFillPolys;
+
 		bool bDrawPolys;
 };
 

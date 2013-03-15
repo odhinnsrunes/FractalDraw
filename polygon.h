@@ -38,7 +38,7 @@ class Polygon : public QObject
 
 		QRectF boundingRect();
 
-		void paint(QPainter & painter);
+		void paint(QPainter & painter, bool bFill);
 		QColor color() const { return m_color; }
 		QColor fillColor() const { return m_fillColor; }
 

@@ -4,11 +4,18 @@
 #include <QPainter>
 #include <QtSvg>
 #include <QSvgGenerator>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
 {
+
+	QCoreApplication::setOrganizationName("OdhinnsRunes");
+	QCoreApplication::setOrganizationDomain("odhinnsrunes.com");
+	QCoreApplication::setApplicationName("Fractal Draw");
+	QSettings settings;
+
 	ui->setupUi(this);
 	bDrawPolys = true;
 	setMouseTracking(false);
@@ -59,6 +66,15 @@ MainWindow::MainWindow(QWidget *parent) :
 	aDrawLines->setChecked(false);
 	connect(aDrawLines, SIGNAL(toggled(bool)), this, SLOT(drawLines(bool)));
 
+	chFillPolys = new QCheckBox(tr("Fill Polys"), ui->mainToolBar);
+	chFillPolys->setChecked(settings.value("fillPolys", true).toBool());
+	connect(chFillPolys, SIGNAL(clicked(bool)), this, SLOT(fillPolysChanged(bool)));
+	ui->mainToolBar->addWidget(chFillPolys);
+
+	chShowBackground = new QCheckBox(tr("Show Background"), ui->mainToolBar);
+	chShowBackground->setChecked(settings.value("showBackground", true).toBool());
+	connect(chShowBackground, SIGNAL(clicked(bool)), this, SLOT(showBackgroundChanged(bool)));
+	ui->mainToolBar->addWidget(chShowBackground);
 
 	this->setWindowTitle(QString("FractalDraw v%1").arg(VERSION));
 
@@ -94,9 +110,10 @@ void MainWindow::paint(QPainter &painter)
 	if(bDrawing)
 		return;
 	bDrawing = true;
-	painter.fillRect(this->rect(), m_BGColor);
+	if(chShowBackground->isChecked())
+		painter.fillRect(this->rect(), m_BGColor);
 	for(int i = 0; i < polys.count(); i++){
-		polys[i]->paint(painter);
+		polys[i]->paint(painter, chFillPolys->isChecked());
 	}
 	for(int i = 0; i < lines.count(); i++){
 		lines[i]->paint(painter);
@@ -108,6 +125,8 @@ void MainWindow::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
 	QPainter painter(this);
+	if(!chShowBackground->isChecked())
+		painter.fillRect(this->rect(), Qt::white);
 	paint(painter);
 	painter.end();
 }
@@ -294,4 +313,19 @@ void MainWindow::mousePressEvent ( QMouseEvent * event )
 		}
 	}
 	this->repaint();
+}
+
+
+void MainWindow::fillPolysChanged(bool bSetTo)
+{
+	QSettings settings;
+	settings.setValue("fillPolys", bSetTo);
+	repaint();
+}
+
+void MainWindow::showBackgroundChanged(bool bSetTo)
+{
+	QSettings settings;
+	settings.setValue("showBackground", bSetTo);
+	repaint();
 }

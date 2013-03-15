@@ -56,17 +56,18 @@ void Polygon::setEndPoint(QPointF newPoint)
 	}
 }
 
-void Polygon::paint(QPainter &painter)
+void Polygon::paint(QPainter &painter, bool bFill)
 {
 	QPolygonF pLine;
 	for(int i = 0; i < lines.count(); i++){
 		pLine << lines[i].polyLine();
 	}
 	painter.setPen(QPen(m_color, 1, Qt::SolidLine));
-	if(complete()){
+	if(complete() && bFill){
 		painter.setBrush(QBrush(m_fillColor, Qt::SolidPattern));
 		painter.drawPolygon(pLine);
 	} else {
+		painter.setBrush(QBrush(m_fillColor, Qt::NoBrush));
 		painter.drawPolyline(pLine);
 	}
 }
@@ -125,3 +126,4 @@ QPointF Polygon::closestTo(QPointF testPoint)
 	}
 	return ret;
 }
+
