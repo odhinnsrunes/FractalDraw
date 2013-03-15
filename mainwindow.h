@@ -76,39 +76,9 @@ class MainWindow : public QMainWindow
 	protected:
 		void changeEvent(QEvent *e);
 		void paintEvent ( QPaintEvent * event );
-		void mouseMoveEvent ( QMouseEvent * event )
-		{
-			if(bDrawPolys){
-				if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
-					polys.last()->setEndPoint(polys.last()->startPoint());
-				} else {
-					polys.last()->setEndPoint(QPointF(event->pos().x(), event->pos().y()));
-				}
-			} else {
-				if(lines.count()){
-					lines.last()->setEnd(QPointF(event->pos().x(), event->pos().y()));
-				}
-			}
-			this->repaint();
-		}
+		void mouseMoveEvent ( QMouseEvent * event );
 		void mousePressEvent ( QMouseEvent * event );
-
-		void mouseReleaseEvent ( QMouseEvent * event )
-		{
-			if(bDrawPolys){
-				if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
-					polys.last()->addPoint(polys.last()->startPoint());
-				} else {
-					polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
-				}
-			} else {
-				if(lines.count()){
-					lines.last()->setEnd(QPointF(event->pos().x(), event->pos().y()));
-				}
-			}
-			this->repaint();
-		}
-
+		void mouseReleaseEvent ( QMouseEvent * event );
 		void keyPressEvent(QKeyEvent * event);
 
 	private slots:

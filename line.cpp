@@ -68,8 +68,6 @@ QPolygonF Line::polyLine() const
 			QPointF point2 = ret.at(j);
 			QPointF point3 = midPoint(point1, point2);
 			qreal dist = distance(point1, point2) / 4;
-			qreal min = -dist;
-			qreal max = dist;
 			qreal offset = -1.0 + (((qreal)qrand() / (qreal)RAND_MAX) * 2.0);
 			offset *= dist;
 			point3.setY(point3.y() + offset);
@@ -98,4 +96,22 @@ void Line::paint(QPainter &painter) const
 	QPolygonF pLine = polyLine();
 	painter.setPen(QPen(m_color, 1, Qt::SolidLine));
 	painter.drawPolyline(pLine);
+}
+
+QPointF Line::closestTo(QPointF testPoint)
+{
+	QPolygonF line = polyLine();
+	qreal minDist = distance(testPoint, line[0]);
+	QPointF ret = line[0];
+	for(int i = 1; i < line.count(); i++){
+		qreal d = distance(testPoint, line[i]);
+		if(d < minDist){
+			minDist = d;
+			ret = line[i];
+		}
+		if(d == 0.0){
+			break;
+		}
+	}
+	return ret;
 }

@@ -166,28 +166,132 @@ void MainWindow::keyPressEvent(QKeyEvent * event)
 	QWidget::keyPressEvent(event);
 }
 
+void MainWindow::mouseReleaseEvent ( QMouseEvent * event )
+{
+	QPointF mousePoint = QPointF(event->pos().x(), event->pos().y());
+	if(bDrawPolys){
+		if(distance(mousePoint, polys.last()->startPoint()) < SNAP_DISTANCE){
+			polys.last()->addPoint(polys.last()->startPoint());
+		} else {
+			polys.last()->addPoint(mousePoint);
+		}
+	} else {
+		if(lines.count()){
+			bool bDidIt = false;
+			for(int i = 0; i < polys.count(); i++){
+//						if(polys[i]->near(mousePoint, SNAP_DISTANCE)){
+					QPointF p = polys[i]->closestTo(mousePoint);
+					if(distance(p, mousePoint) < SNAP_DISTANCE){
+						lines.last()->setEnd(p);
+						bDidIt = true;
+						break;
+					}
+//						}
+			}
+			for(int i = 0; i < lines.count() - 1; i++){
+				if(lines[i]->near(mousePoint, SNAP_DISTANCE)){
+					QPointF p = lines[i]->closestTo(mousePoint);
+					if(distance(p, mousePoint) < SNAP_DISTANCE){
+						lines.last()->setEnd(p);
+						bDidIt = true;
+						break;
+					}
+				}
+			}
+			if(!bDidIt)
+				lines.last()->setEnd(mousePoint);
+		}
+	}
+	this->repaint();
+}
+
+void MainWindow::mouseMoveEvent ( QMouseEvent * event )
+{
+	QPointF mousePoint = QPointF(event->pos().x(), event->pos().y());
+	if(bDrawPolys){
+		if(distance(mousePoint, polys.last()->startPoint()) < SNAP_DISTANCE){
+			polys.last()->setEndPoint(polys.last()->startPoint());
+		} else {
+			polys.last()->setEndPoint(mousePoint);
+		}
+	} else {
+		if(lines.count()){
+			bool bDidIt = false;
+			for(int i = 0; i < polys.count(); i++){
+//						if(polys[i]->near(mousePoint, SNAP_DISTANCE)){
+					QPointF p = polys[i]->closestTo(mousePoint);
+					if(distance(p, mousePoint) < SNAP_DISTANCE){
+						lines.last()->setEnd(p);
+						bDidIt = true;
+						break;
+					}
+//						}
+			}
+			for(int i = 0; i < lines.count() - 1; i++){
+				if(lines[i]->near(mousePoint, SNAP_DISTANCE)){
+					QPointF p = lines[i]->closestTo(mousePoint);
+					if(distance(p, mousePoint) < SNAP_DISTANCE){
+						lines.last()->setEnd(p);
+						bDidIt = true;
+						break;
+					}
+				}
+			}
+			if(!bDidIt)
+				lines.last()->setEnd(mousePoint);
+		}
+	}
+	this->repaint();
+}
+
 void MainWindow::mousePressEvent ( QMouseEvent * event )
 {
+	QPointF mousePoint = QPointF(event->pos().x(), event->pos().y());
 	if(bDrawPolys){
 		if(polys.count() == 0){
 			Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
 			polys.append(newPoly);
-			polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
+			polys.last()->addPoint(mousePoint);
 		} else {
 			if(polys.last()->complete()){
 				Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
 				polys.append(newPoly);
-				polys.last()->addPoint(QPointF(event->pos().x(), event->pos().y()));
+				polys.last()->addPoint(mousePoint);
 			}
 		}
-		if(distance(QPointF(event->pos().x(), event->pos().y()), polys.last()->startPoint()) < 5.0){
+		if(distance(mousePoint, polys.last()->startPoint()) < SNAP_DISTANCE){
 			polys.last()->setEndPoint(polys.last()->startPoint());
 		} else {
-			polys.last()->setEndPoint(QPointF(event->pos().x(), event->pos().y()));
+			polys.last()->setEndPoint(mousePoint);
 		}
 	} else {
-		Line * newLine = new Line(this, QPointF(event->pos().x(), event->pos().y()), QPointF(event->pos().x(), event->pos().y()), m_lineColor);
-		lines.append(newLine);
+		bool bDidIt = false;
+		for(int i = 0; i < polys.count(); i++){
+			//if(polys[i]->near(mousePoint, SNAP_DISTANCE)){
+				QPointF p = polys[i]->closestTo(mousePoint);
+				if(distance(p, mousePoint) < SNAP_DISTANCE){
+					Line * newLine = new Line(this, p, p, m_lineColor);
+					lines.append(newLine);
+					bDidIt = true;
+					break;
+				}
+//			}
+		}
+		for(int i = 0; i < lines.count() - 1; i++){
+			if(lines[i]->near(mousePoint, SNAP_DISTANCE)){
+				QPointF p = lines[i]->closestTo(mousePoint);
+				if(distance(p, mousePoint) < SNAP_DISTANCE){
+					Line * newLine = new Line(this, p, p, m_lineColor);
+					lines.append(newLine);
+					bDidIt = true;
+					break;
+				}
+			}
+		}
+		if(!bDidIt){
+			Line * newLine = new Line(this, mousePoint, mousePoint, m_lineColor);
+			lines.append(newLine);
+		}
 	}
 	this->repaint();
 }

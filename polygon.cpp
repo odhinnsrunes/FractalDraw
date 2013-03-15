@@ -83,8 +83,12 @@ void Polygon::setColor(QColor color)
 QRectF Polygon::boundingRect()
 {
 	if(lines.count() == 0)
-		return QRect(0.0, 0.0, 0.0, 0.0);
-	QRectF ret(1000000.0, 1000000.0, -1000001.0, -1000001.0);
+		return QRectF(0.0, 0.0, 0.0, 0.0);
+	QRectF ret;
+	ret.setTop(1000000.0);
+	ret.setLeft(1000000.0);
+	ret.setBottom(-1000000.0);
+	ret.setRight(-1000000.0);
 	for(int i = 0; i < lines.count(); i++){
 		QRectF thisRect = lines[i].boundingRect();
 		if(ret.top() > thisRect.top())
@@ -95,6 +99,29 @@ QRectF Polygon::boundingRect()
 			ret.setBottom(thisRect.bottom());
 		if(ret.right() < thisRect.right())
 			ret.setRight(thisRect.right());
+	}
+	return ret;
+}
+
+QPointF Polygon::closestTo(QPointF testPoint)
+{
+	QPointF ret;
+	if(lines.count()){
+		ret = lines[0].closestTo(testPoint);
+		qreal minDist = distance(testPoint, lines[0].closestTo(testPoint));
+		for(int i = 1; i < lines.count(); i++){
+			//if(lines[i].near(testPoint, SNAP_DISTANCE)){
+				QPointF p = lines[i].closestTo(testPoint);
+				qreal d = distance(testPoint, p);
+				if(d < minDist){
+					minDist = d;
+					ret = p;
+				}
+				if(d == 0.0){
+					break;
+				}
+			//}
+		}
 	}
 	return ret;
 }

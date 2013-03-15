@@ -6,6 +6,8 @@
 #include <QtCore/qmath.h>
 #include <QPainter>
 
+#define SNAP_DISTANCE 10.0
+
 QPointF midPoint(QPointF point1, QPointF point2);
 qreal distance(QPointF point1, QPointF point2);
 qreal rotation(QPointF point1, QPointF point2);
@@ -38,6 +40,16 @@ class Line : public QObject
 		QPointF start() const { return m_start; }
 		QPointF end() const { return m_end; }
 		QColor color() const { return m_color; }
+		QPointF closestTo(QPointF testPoint);
+
+		bool near(QPointF testPoint, qreal threshold){
+			QRectF rect = boundingRect();
+			rect.setLeft(rect.left() - threshold);
+			rect.setRight(rect.right() + threshold);
+			rect.setTop(rect.top() - threshold);
+			rect.setBottom(rect.bottom() + threshold);
+			return rect.contains(testPoint);
+		}
 
 		QPolygonF polyLine() const;
 

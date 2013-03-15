@@ -23,6 +23,17 @@ class Polygon : public QObject
 			}
 		}
 
+		QPointF closestTo(QPointF testPoint);
+		bool near(QPointF testPoint, qreal threshold){
+			QRectF rect = boundingRect();
+			rect.setLeft(rect.left() - threshold);
+			rect.setRight(rect.right() + threshold);
+			rect.setTop(rect.top() - threshold);
+			rect.setBottom(rect.bottom() + threshold);
+			return rect.contains(testPoint);
+		}
+
+
 		Polygon & operator= (const Polygon & rhs);
 
 		QRectF boundingRect();
