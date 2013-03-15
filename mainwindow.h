@@ -11,6 +11,12 @@
 #include "colorwell.h"
 #include <QAction>
 #include <QCheckBox>
+#include <QSettings>
+#include <QJsonDocument>
+#include <QJsonObject>
+
+QString JSONColor(QColor color);
+QColor JSONColor(QString str);
 
 namespace Ui {
 class MainWindow;
@@ -28,22 +34,30 @@ class MainWindow : public QMainWindow
 	public slots:
 		void saveSvg();
 		void setColor(QColor color){
+			QSettings settings;
+			settings.setValue("borderColor", JSONColor(color));
 			if(polys.count())
 				polys.last()->setColor(color);
 			repaint();
 		}
 		void setFillColor(QColor color){
+			QSettings settings;
+			settings.setValue("fillColor", JSONColor(color));
 			if(polys.count())
 				polys.last()->setFillColor(color);
 			repaint();
 		}
 
 		void setBGColor(QColor color){
+			QSettings settings;
+			settings.setValue("backgroundColor", JSONColor(color));
 			m_BGColor = color;
 			repaint();
 		}
 
 		void setLineColor(QColor color){
+			QSettings settings;
+			settings.setValue("lineColor", JSONColor(color));
 			m_lineColor = color;
 			if(lines.count())
 				lines.last()->setColor(color);
@@ -86,6 +100,8 @@ class MainWindow : public QMainWindow
 		void on_actionExport_to_SVG_triggered();
 		void fillPolysChanged(bool bSetTo);
 		void showBackgroundChanged(bool bSetTo);
+
+		void on_actionDefault_Colors_triggered();
 
 	private:
 		Ui::MainWindow *ui;

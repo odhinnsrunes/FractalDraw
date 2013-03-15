@@ -4,7 +4,24 @@
 #include <QPainter>
 #include <QtSvg>
 #include <QSvgGenerator>
-#include <QSettings>
+
+QString JSONColor(QColor color){
+	QJsonObject obj;
+	obj["red"] = color.red();
+	obj["green"] = color.green();
+	obj["blue"] = color.blue();
+	QJsonDocument doc = QJsonDocument(obj);
+	return QString(doc.toJson());
+}
+
+QColor JSONColor(QString str){
+	QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
+	QColor ret;
+	ret.setRed((int)doc.object()["red"].toDouble());
+	ret.setGreen((int)doc.object()["green"].toDouble());
+	ret.setBlue((int)doc.object()["blue"].toDouble());
+	return ret;
+}
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -22,27 +39,34 @@ MainWindow::MainWindow(QWidget *parent) :
 	setAcceptDrops(false);
 	setCursor(QCursor(Qt::CrossCursor));
 
+	QString defaultColor;
+
 	borderWell = new ColorWell(ui->mainToolBar, tr("Border"));
 	borderWell->resize(64, 64);
-	borderWell->setColor(QColor(255, 240, 168));
+	defaultColor = JSONColor(QColor(255, 240, 168));
+	qDebug() << "border: " << defaultColor;
+	borderWell->setColor(JSONColor(settings.value("borderColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(borderWell);
 
 	fillWell = new ColorWell(ui->mainToolBar, tr("Fill"));
 	fillWell->resize(64, 64);
-	fillWell->setColor(QColor(64, 128, 64));
+	defaultColor = JSONColor(QColor(64, 128, 64));
+	fillWell->setColor(JSONColor(settings.value("fillColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(fillWell);
 
 	backgroundWell = new ColorWell(ui->mainToolBar, tr("Back"));
 	backgroundWell->resize(64, 64);
-	backgroundWell->setColor(QColor(0, 64, 128));
+	defaultColor = JSONColor(QColor(0, 64, 128));
+	backgroundWell->setColor(JSONColor(settings.value("backgroundColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(backgroundWell);
 
 	lineWell = new ColorWell(ui->mainToolBar, tr("Lines"));
 	lineWell->resize(64, 64);
-	lineWell->setColor(QColor(0, 64, 128));
+	defaultColor = JSONColor(QColor(0, 64, 128));
+	lineWell->setColor(JSONColor(settings.value("lineColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(lineWell);
 
@@ -328,4 +352,16 @@ void MainWindow::showBackgroundChanged(bool bSetTo)
 	QSettings settings;
 	settings.setValue("showBackground", bSetTo);
 	repaint();
+}
+
+void MainWindow::on_actionDefault_Colors_triggered()
+{
+	setColor(QColor(255, 240, 168));
+	borderWell->setColor(QColor(255, 240, 168));
+	setFillColor(QColor(64, 128, 64));
+	fillWell->setColor(QColor(64, 128, 64));
+	setBGColor(QColor(0, 64, 128));
+	backgroundWell->setColor(QColor(0, 64, 128));
+	setLineColor(QColor(0, 64, 128));
+	lineWell->setColor(QColor(0, 64, 128));
 }

@@ -31,7 +31,14 @@
     </property>
     <addaction name="actionExport_to_SVG"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionDefault_Colors"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -45,6 +52,11 @@
   <action name="actionExport_to_SVG">
    <property name="text">
     <string>Export to SVG...</string>
+   </property>
+  </action>
+  <action name="actionDefault_Colors">
+   <property name="text">
+    <string>Default Colors</string>
    </property>
   </action>
  </widget>
