@@ -161,13 +161,16 @@ void MainWindow::saveSvg()
 {
 	QSettings settings;
 	QString lastFile = settings.value("lastsvg", "").toString();
-
+	QString defaultFilter = QString("*.svg");
 	QString newPath = QFileDialog::getSaveFileName(this, tr("Save SVG"),
-		lastFile, tr("SVG files (*.svg)"));
+		lastFile, tr("SVG files (*.svg)"), &defaultFilter);
 
 	if (newPath.isEmpty())
 		return;
 
+	if(!newPath.endsWith(".svg")){
+		newPath = newPath.append(".svg");
+	}
 	settings.setValue("lastsvg", newPath);
 
 	QSvgGenerator generator;
@@ -245,7 +248,7 @@ void MainWindow::mouseReleaseEvent ( QMouseEvent * event )
 		if(lines.count()){
 			bool bDidIt = false;
 			for(int i = 0; i < polys.count(); i++){
-//						if(polys[i]->near(mousePoint, SNAP_DISTANCE)){
+//						if(polys[i]->isNear(mousePoint, SNAP_DISTANCE)){
 					QPointF p = polys[i]->closestTo(mousePoint);
 					if(distance(p, mousePoint) < SNAP_DISTANCE){
 						lines.last()->setEnd(p);
@@ -254,8 +257,8 @@ void MainWindow::mouseReleaseEvent ( QMouseEvent * event )
 					}
 //						}
 			}
-			for(int i = 0; i < lines.count() - 1; i++){
-				if(lines[i]->near(mousePoint, SNAP_DISTANCE)){
+			for(int i = 0; i < lines.count() - 1; i++) {
+				if(lines[i]->isNear(mousePoint, SNAP_DISTANCE)){
 					QPointF p = lines[i]->closestTo(mousePoint);
 					if(distance(p, mousePoint) < SNAP_DISTANCE){
 						lines.last()->setEnd(p);
@@ -284,7 +287,7 @@ void MainWindow::mouseMoveEvent ( QMouseEvent * event )
 		if(lines.count()){
 			bool bDidIt = false;
 			for(int i = 0; i < polys.count(); i++){
-//						if(polys[i]->near(mousePoint, SNAP_DISTANCE)){
+//						if(polys[i]->isNear(mousePoint, SNAP_DISTANCE)){
 					QPointF p = polys[i]->closestTo(mousePoint);
 					if(distance(p, mousePoint) < SNAP_DISTANCE){
 						lines.last()->setEnd(p);
@@ -294,7 +297,7 @@ void MainWindow::mouseMoveEvent ( QMouseEvent * event )
 //						}
 			}
 			for(int i = 0; i < lines.count() - 1; i++){
-				if(lines[i]->near(mousePoint, SNAP_DISTANCE)){
+				if(lines[i]->isNear(mousePoint, SNAP_DISTANCE)){
 					QPointF p = lines[i]->closestTo(mousePoint);
 					if(distance(p, mousePoint) < SNAP_DISTANCE){
 						lines.last()->setEnd(p);
@@ -315,12 +318,12 @@ void MainWindow::mousePressEvent ( QMouseEvent * event )
 	QPointF mousePoint = QPointF(event->pos().x(), event->pos().y());
 	if(bDrawPolys){
 		if(polys.count() == 0){
-			Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
+			FractalPolygon *newPoly = new FractalPolygon(this, m_borderColor, m_fillColor);
 			polys.append(newPoly);
 			polys.last()->addPoint(mousePoint);
 		} else {
 			if(polys.last()->complete()){
-				Polygon *newPoly = new Polygon(this, m_borderColor, m_fillColor);
+				FractalPolygon *newPoly = new FractalPolygon(this, m_borderColor, m_fillColor);
 				polys.append(newPoly);
 				polys.last()->addPoint(mousePoint);
 			}
@@ -333,10 +336,10 @@ void MainWindow::mousePressEvent ( QMouseEvent * event )
 	} else {
 		bool bDidIt = false;
 		for(int i = 0; i < polys.count(); i++){
-			//if(polys[i]->near(mousePoint, SNAP_DISTANCE)){
+			//if(polys[i]->isNear(mousePoint, SNAP_DISTANCE)){
 				QPointF p = polys[i]->closestTo(mousePoint);
 				if(distance(p, mousePoint) < SNAP_DISTANCE){
-					Line * newLine = new Line(this, p, p, m_lineColor);
+					FractalLine * newLine = new FractalLine(this, p, p, m_lineColor);
 					lines.append(newLine);
 					bDidIt = true;
 					break;
@@ -344,10 +347,10 @@ void MainWindow::mousePressEvent ( QMouseEvent * event )
 //			}
 		}
 		for(int i = 0; i < lines.count() - 1; i++){
-			if(lines[i]->near(mousePoint, SNAP_DISTANCE)){
+			if(lines[i]->isNear(mousePoint, SNAP_DISTANCE)){
 				QPointF p = lines[i]->closestTo(mousePoint);
 				if(distance(p, mousePoint) < SNAP_DISTANCE){
-					Line * newLine = new Line(this, p, p, m_lineColor);
+					FractalLine * newLine = new FractalLine(this, p, p, m_lineColor);
 					lines.append(newLine);
 					bDidIt = true;
 					break;
@@ -355,7 +358,7 @@ void MainWindow::mousePressEvent ( QMouseEvent * event )
 			}
 		}
 		if(!bDidIt){
-			Line * newLine = new Line(this, mousePoint, mousePoint, m_lineColor);
+			FractalLine * newLine = new FractalLine(this, mousePoint, mousePoint, m_lineColor);
 			lines.append(newLine);
 		}
 	}
@@ -404,8 +407,12 @@ void MainWindow::save()
 {
 	QSettings settings;
 	QString lastFile = settings.value("lastfile", "").toString();
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Drawing"), lastFile, QString("Drawings (*.fdr)"));
+	QString defaultFilter = QString("*.fdr");
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Drawing"), lastFile, tr("Drawings (*.fdr)"), &defaultFilter);
 	if(!fileName.isEmpty()){
+		if(!fileName.endsWith(".fdr")){
+			fileName = fileName.append(".fdr");
+		}
 		QJsonObject obj;
 		obj["backgroundcolor"] = JSONColor(m_BGColor);
 		obj["bordercolor"] = JSONColor(m_borderColor);
@@ -439,8 +446,12 @@ void MainWindow::load()
 {
 	QSettings settings;
 	QString lastFile = settings.value("lastfile", "").toString();
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Drawing"), lastFile, QString("Drawings (*.fdr)"));
+	QString defaultFilter = QString("*.fdr");
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Drawing"), lastFile, tr("Drawings (*.fdr)"), &defaultFilter);
 	if(!fileName.isEmpty()){
+		if(!fileName.endsWith(".fdr")){
+			fileName = fileName.append(".fdr");
+		}
 		QFile file(fileName);
 		if(file.open(QFile::ReadOnly)){
 			settings.setValue("lastfile", fileName);
@@ -450,13 +461,13 @@ void MainWindow::load()
 
 			QJsonArray jpolys = obj["polys"].toArray();
 			for(int i = 0; i < jpolys.count(); i++){
-				Polygon *newPoly = new Polygon(this, jpolys[i].toObject());
+				FractalPolygon *newPoly = new FractalPolygon(this, jpolys[i].toObject());
 				polys.append(newPoly);
 
 			}
 			QJsonArray jlines = obj["lines"].toArray();
 			for(int i = 0; i < jlines.count(); i++){
-				Line *newLine = new Line(this, jlines[i].toObject());
+				FractalLine *newLine = new FractalLine(this, jlines[i].toObject());
 				lines.append(newLine);
 			}
 

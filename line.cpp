@@ -34,7 +34,7 @@ QColor JSONColor(QJsonObject obj){
 	return ret;
 }
 
-Line::Line(QObject *parent, QColor newColor, unsigned int uiSeed) :
+FractalLine::FractalLine(QObject *parent, QColor newColor, unsigned int uiSeed) :
 	QObject(parent)
 {
 	m_seed = uiSeed;
@@ -43,7 +43,7 @@ Line::Line(QObject *parent, QColor newColor, unsigned int uiSeed) :
 	m_color = newColor;
 }
 
-Line::Line(const Line & oldLine) :
+FractalLine::FractalLine(const FractalLine & oldLine) :
 	QObject(oldLine.parent())
 {
 	m_seed = oldLine.seed();
@@ -52,7 +52,7 @@ Line::Line(const Line & oldLine) :
 	m_color = oldLine.color();
 }
 
-Line::Line(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor, unsigned int uiSeed):
+FractalLine::FractalLine(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor, unsigned int uiSeed):
 	QObject(parent)
 {
 	m_seed = uiSeed;
@@ -61,7 +61,7 @@ Line::Line(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor, u
 	m_color = newColor;
 }
 
-Line::Line(QObject *parent, QJsonObject obj) :
+FractalLine::FractalLine(QObject *parent, QJsonObject obj) :
 	QObject(parent)
 {
 	m_seed = (unsigned int)obj["seed"].toString().toLong();
@@ -90,7 +90,7 @@ qreal rotation(QPointF point1, QPointF point2)
 	return qAtan2(dy, dx) * 180 / 3.141592;
 }
 
-QPolygonF Line::polyLine() const
+QPolygonF FractalLine::polyLine() const
 {
 	QPolygonF ret;
 	ret << QPointF(0, 0) << QPointF(distance(m_start, m_end), 0);
@@ -128,28 +128,28 @@ QPolygonF Line::polyLine() const
 	return ret;
 }
 
-QRectF Line::boundingRect()
+QRectF FractalLine::boundingRect()
 {
 	return polyLine().boundingRect();
 }
 
-void Line::paint(QPainter &painter) const
+void FractalLine::paint(QPainter &painter) const
 {
 	QPolygonF pLine = polyLine();
 	painter.setPen(QPen(m_color, 1, Qt::SolidLine));
 	painter.drawPolyline(pLine);
 }
 
-QPointF Line::closestTo(QPointF testPoint)
+QPointF FractalLine::closestTo(QPointF testPoint)
 {
-	QPolygonF line = polyLine();
-	qreal minDist = distance(testPoint, line[0]);
-	QPointF ret = line[0];
-	for(int i = 1; i < line.count(); i++){
-		qreal d = distance(testPoint, line[i]);
+	QPolygonF FractalLine = polyLine();
+	qreal minDist = distance(testPoint, FractalLine[0]);
+	QPointF ret = FractalLine[0];
+	for(int i = 1; i < FractalLine.count(); i++){
+		qreal d = distance(testPoint, FractalLine[i]);
 		if(d < minDist){
 			minDist = d;
-			ret = line[i];
+			ret = FractalLine[i];
 		}
 		if(d == 0.0){
 			break;

@@ -22,7 +22,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -51,8 +51,14 @@
    <addaction name="menuTools"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
    <property name="movable">
     <bool>false</bool>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -61,7 +67,6 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionExport_to_SVG">
    <property name="text">
     <string>Export to SVG...</string>

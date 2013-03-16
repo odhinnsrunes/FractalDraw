@@ -1,6 +1,6 @@
 #include "polygon.h"
 
-Polygon::Polygon(QObject *parent, QColor color, QColor bgColor) :
+FractalPolygon::FractalPolygon(QObject *parent, QColor color, QColor bgColor) :
 	QObject(parent)
 {
 	m_color = color;
@@ -8,7 +8,7 @@ Polygon::Polygon(QObject *parent, QColor color, QColor bgColor) :
 }
 
 
-Polygon::Polygon(const Polygon & oldPolygon) :
+FractalPolygon::FractalPolygon(const FractalPolygon & oldPolygon) :
 	QObject(oldPolygon.parent())
 {
 	m_color = oldPolygon.color();
@@ -18,19 +18,19 @@ Polygon::Polygon(const Polygon & oldPolygon) :
 	}
 }
 
-Polygon::Polygon(QObject *parent, QJsonObject obj) :
+FractalPolygon::FractalPolygon(QObject *parent, QJsonObject obj) :
 	QObject(parent)
 {
 	m_color = JSONColor(obj["color"].toObject());
 	m_fillColor = JSONColor(obj["fillcolor"].toObject());
 	QJsonArray arr = obj["lines"].toArray();
 	for(int i = 0; i < arr.count(); i++){
-		Line newLine(this, arr[i].toObject());
+		FractalLine newLine(this, arr[i].toObject());
 		lines.append(newLine);
 	}
 }
 
-Polygon::~Polygon()
+FractalPolygon::~FractalPolygon()
 {
 	int c = lines.count();
 	for(int i = 0; i < c; i++){
@@ -38,7 +38,7 @@ Polygon::~Polygon()
 	}
 }
 
-Polygon & Polygon::operator= (const Polygon & rhs){
+FractalPolygon & FractalPolygon::operator= (const FractalPolygon & rhs){
 	if (this == &rhs)
 		  return *this;
 	setParent(rhs.parent());
@@ -50,9 +50,9 @@ Polygon & Polygon::operator= (const Polygon & rhs){
 	return *this;
 }
 
-void Polygon::addPoint(QPointF newPoint)
+void FractalPolygon::addPoint(QPointF newPoint)
 {
-	Line newLine(this, m_color);
+	FractalLine newLine(this, m_color);
 	newLine.setStart(newPoint);
 	newLine.setEnd(QPointF(newPoint.x() + 0.0, newPoint.y() + 0.0));
 	if(lines.count()){
@@ -61,14 +61,14 @@ void Polygon::addPoint(QPointF newPoint)
 	lines.append(newLine);
 }
 
-void Polygon::setEndPoint(QPointF newPoint)
+void FractalPolygon::setEndPoint(QPointF newPoint)
 {
 	if(lines.count()){
 		lines.last().setEnd(newPoint);
 	}
 }
 
-void Polygon::paint(QPainter &painter, bool bFill, bool bOutline)
+void FractalPolygon::paint(QPainter &painter, bool bFill, bool bOutline)
 {
 	QPolygonF pLine;
 	for(int i = 0; i < lines.count(); i++){
@@ -89,7 +89,7 @@ void Polygon::paint(QPainter &painter, bool bFill, bool bOutline)
 	}
 }
 
-void Polygon::setColor(QColor color)
+void FractalPolygon::setColor(QColor color)
 {
 	m_color = color;
 	for(int i = 0; i < lines.count(); i++){
@@ -98,7 +98,7 @@ void Polygon::setColor(QColor color)
 	emit colorChanged(color);
 }
 
-QRectF Polygon::boundingRect()
+QRectF FractalPolygon::boundingRect()
 {
 	if(lines.count() == 0)
 		return QRectF(0.0, 0.0, 0.0, 0.0);
@@ -121,14 +121,14 @@ QRectF Polygon::boundingRect()
 	return ret;
 }
 
-QPointF Polygon::closestTo(QPointF testPoint)
+QPointF FractalPolygon::closestTo(QPointF testPoint)
 {
 	QPointF ret;
 	if(lines.count()){
 		ret = lines[0].closestTo(testPoint);
 		qreal minDist = distance(testPoint, lines[0].closestTo(testPoint));
 		for(int i = 1; i < lines.count(); i++){
-			//if(lines[i].near(testPoint, SNAP_DISTANCE)){
+			//if(lines[i].isNear(testPoint, SNAP_DISTANCE)){
 				QPointF p = lines[i].closestTo(testPoint);
 				qreal d = distance(testPoint, p);
 				if(d < minDist){
@@ -144,7 +144,7 @@ QPointF Polygon::closestTo(QPointF testPoint)
 	return ret;
 }
 
-QJsonObject Polygon::save(){
+QJsonObject FractalPolygon::save(){
 	QJsonObject obj;
 	QJsonArray jlines;
 	for(int i = 0; i < lines.count(); i++){

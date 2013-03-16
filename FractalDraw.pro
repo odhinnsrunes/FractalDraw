@@ -15,12 +15,12 @@ macx:ICON = images/FractalDraw.icns
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    line.cpp \
+	line.cpp \
     polygon.cpp \
     colorwell.cpp
 
 HEADERS  += mainwindow.h \
-    line.h \
+	line.h \
     polygon.h \
     colorwell.h
 
@@ -28,3 +28,5 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     resources.qrc
+
+win32:RC_FILE = FractalDraw.rc

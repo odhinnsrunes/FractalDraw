@@ -8,7 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-
+#include <time.h>
 QString JSONColorString(QColor color);
 QColor JSONColorString(QString str);
 QColor JSONColor(QJsonObject obj);
@@ -20,7 +20,7 @@ QPointF midPoint(QPointF point1, QPointF point2);
 qreal distance(QPointF point1, QPointF point2);
 qreal rotation(QPointF point1, QPointF point2);
 
-class Line : public QObject
+class FractalLine : public QObject
 {
 		Q_OBJECT
 		Q_PROPERTY(unsigned int seed READ seed WRITE setSeed NOTIFY seedChanged)
@@ -29,12 +29,12 @@ class Line : public QObject
 		Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
 	public:
-		explicit Line(QObject *parent = 0, QColor newColor = QColor(0, 0, 0), unsigned int uiSeed = time(0));
-		explicit Line(const Line & oldLine);
-		explicit Line(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor = QColor(0, 0, 0), unsigned int uiSeed = time(0));
-		explicit Line(QObject *parent, QJsonObject obj);
+		explicit FractalLine(QObject *parent = 0, QColor newColor = QColor(0, 0, 0), unsigned int uiSeed = time(0));
+		explicit FractalLine(const FractalLine & oldLine);
+		explicit FractalLine(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor = QColor(0, 0, 0), unsigned int uiSeed = time(0));
+		explicit FractalLine(QObject *parent, QJsonObject obj);
 
-		Line & operator=(const Line &rhs){
+		FractalLine & operator=(const FractalLine &rhs){
 			if (this == &rhs)
 				  return *this;
 			setParent(rhs.parent());
@@ -55,7 +55,7 @@ class Line : public QObject
 		QColor color() const { return m_color; }
 		QPointF closestTo(QPointF testPoint);
 
-		bool near(QPointF testPoint, qreal threshold){
+		bool isNear(QPointF testPoint, qreal threshold){
 			QRectF rect = boundingRect();
 			rect.setLeft(rect.left() - threshold);
 			rect.setRight(rect.right() + threshold);

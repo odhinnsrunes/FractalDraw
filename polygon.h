@@ -4,17 +4,17 @@
 #include <QObject>
 #include "line.h"
 
-class Polygon : public QObject
+class FractalPolygon : public QObject
 {
 		Q_OBJECT
 		Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 		Q_PROPERTY(QColor fillColor READ fillColor WRITE setFillColor NOTIFY fillColorChanged)
 
 	public:
-		explicit Polygon(QObject *parent = 0, QColor color = QColor(0, 0, 0), QColor bgColor = QColor(0,0,0));
-		explicit Polygon(const Polygon& oldLine);
-		explicit Polygon(QObject *parent, QJsonObject obj);
-		~Polygon();
+		explicit FractalPolygon(QObject *parent = 0, QColor color = QColor(0, 0, 0), QColor bgColor = QColor(0,0,0));
+		explicit FractalPolygon(const FractalPolygon& oldLine);
+		explicit FractalPolygon(QObject *parent, QJsonObject obj);
+		~FractalPolygon();
 
 		void addPoint(QPointF newPoint);
 		void setEndPoint(QPointF newPoint);
@@ -37,7 +37,7 @@ class Polygon : public QObject
 		}
 
 		QPointF closestTo(QPointF testPoint);
-		bool near(QPointF testPoint, qreal threshold){
+		bool isNear(QPointF testPoint, qreal threshold){
 			QRectF rect = boundingRect();
 			rect.setLeft(rect.left() - threshold);
 			rect.setRight(rect.right() + threshold);
@@ -47,7 +47,7 @@ class Polygon : public QObject
 		}
 
 
-		Polygon & operator= (const Polygon & rhs);
+		FractalPolygon & operator= (const FractalPolygon & rhs);
 
 		QRectF boundingRect();
 
@@ -85,7 +85,7 @@ class Polygon : public QObject
 		}
 
 	private:
-		QVector<Line> lines;
+		QVector<FractalLine> lines;
 
 		QColor m_color;
 		QColor m_fillColor;

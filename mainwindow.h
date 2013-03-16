@@ -114,9 +114,9 @@ class MainWindow : public QMainWindow
 
 	private:
 		Ui::MainWindow *ui;
-		//Polygon poly;
-		QVector<Polygon*> polys;
-		QVector<Line *> lines;
+		//FractalPolygon poly;
+		QVector<FractalPolygon*> polys;
+		QVector<FractalLine *> lines;
 
 		ColorWell * borderWell;
 		ColorWell * fillWell;
