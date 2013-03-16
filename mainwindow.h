@@ -86,6 +86,7 @@ class MainWindow : public QMainWindow
 		void save();
 		void load();
 		void clear();
+		void undo();
 
 	protected:
 		void changeEvent(QEvent *e);
@@ -107,6 +108,8 @@ class MainWindow : public QMainWindow
 		void on_actionNew_triggered();
 
 		void on_actionOpen_triggered();
+
+		void on_actionUndo_triggered();
 
 	private:
 		Ui::MainWindow *ui;

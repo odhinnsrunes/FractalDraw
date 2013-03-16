@@ -24,6 +24,11 @@ class Polygon : public QObject
 			}
 		}
 
+		void setLastSeed(unsigned int seed){
+			if(lines.count())
+				lines.last().setSeed(seed);
+		}
+
 		QPointF closestTo(QPointF testPoint);
 		bool near(QPointF testPoint, qreal threshold){
 			QRectF rect = boundingRect();

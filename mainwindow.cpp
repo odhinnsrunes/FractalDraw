@@ -170,25 +170,42 @@ void MainWindow::on_actionExport_to_SVG_triggered()
 	saveSvg();
 }
 
+void MainWindow::undo()
+{
+	if(bDrawPolys){
+		polys.last()->undo();
+		repaint();
+	} else {
+		if(lines.count()){
+			delete lines.last();
+			lines.remove(lines.count() - 1);
+			repaint();
+		}
+	}
+}
+
 void MainWindow::keyPressEvent(QKeyEvent * event)
 {
 	switch(event->key()){
-		case Qt::Key_Z:
-			if((event->modifiers() & Qt::ControlModifier)){
-				if(bDrawPolys){
-					polys.last()->undo();
-					repaint();
-					event->accept();
-					return;
-				} else {
-					if(lines.count()){
-						delete lines.last();
-						lines.remove(lines.count() - 1);
-						repaint();
-						event->accept();
-					}
-				}
+		case Qt::Key_Space:
+		{
+			static QTime s;
+			static bool bStarted = false;
+			if(!bStarted){
+				s.start();
+				bStarted = true;
 			}
+			time_t t = time(0) * 10 | s.elapsed();
+			if(bDrawPolys){
+				polys.last()->setLastSeed(t);
+			} else {
+				lines.last()->setSeed(t);
+			}
+			event->accept();
+			repaint();
+			return;
+		}
+		default:
 			break;
 	}
 	QWidget::keyPressEvent(event);
@@ -439,4 +456,9 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::on_actionOpen_triggered()
 {
 	load();
+}
+
+void MainWindow::on_actionUndo_triggered()
+{
+	undo();
 }
