@@ -350,7 +350,9 @@ void MainWindow::on_actionDefault_Colors_triggered()
 
 void MainWindow::save()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Drawing"), QString(), QString("Drawings (*.fdr)"));
+	QSettings settings;
+	QString lastFile = settings.value("lastfile", "").toString();
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Drawing"), lastFile, QString("Drawings (*.fdr)"));
 	if(!fileName.isEmpty()){
 		QJsonObject obj;
 		obj["backgroundcolor"] = JSONColor(m_BGColor);
@@ -370,6 +372,7 @@ void MainWindow::save()
 		QJsonDocument doc = QJsonDocument(obj);
 		QFile file(fileName);
 		if(file.open(QFile::WriteOnly)){
+			settings.setValue("lastfile", fileName);
 			file.write(doc.toJson());
 		}
 	}
@@ -382,10 +385,13 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::load()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Drawing"), QString(), QString("Drawings (*.fdr)"));
+	QSettings settings;
+	QString lastFile = settings.value("lastfile", "").toString();
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Drawing"), lastFile, QString("Drawings (*.fdr)"));
 	if(!fileName.isEmpty()){
 		QFile file(fileName);
 		if(file.open(QFile::ReadOnly)){
+			settings.setValue("lastfile", fileName);
 			QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
 			QJsonObject obj = doc.object();
 			clear();
