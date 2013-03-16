@@ -18,6 +18,18 @@ Polygon::Polygon(const Polygon & oldPolygon) :
 	}
 }
 
+Polygon::Polygon(QObject *parent, QJsonObject obj) :
+	QObject(parent)
+{
+	m_color = JSONColor(obj["color"].toObject());
+	m_fillColor = JSONColor(obj["fillcolor"].toObject());
+	QJsonArray arr = obj["lines"].toArray();
+	for(int i = 0; i < arr.count(); i++){
+		Line newLine(this, arr[i].toObject());
+		lines.append(newLine);
+	}
+}
+
 Polygon::~Polygon()
 {
 	int c = lines.count();

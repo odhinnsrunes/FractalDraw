@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define VERSION "1.0"
+#define VERSION "0.9.1"
 
 #include <QMainWindow>
 #include "line.h"
@@ -30,14 +30,14 @@ class MainWindow : public QMainWindow
 		void saveSvg();
 		void setColor(QColor color){
 			QSettings settings;
-			settings.setValue("borderColor", JSONColor(color));
+			settings.setValue("borderColor", JSONColorString(color));
 			if(polys.count())
 				polys.last()->setColor(color);
 			repaint();
 		}
 		void setFillColor(QColor color){
 			QSettings settings;
-			settings.setValue("fillColor", JSONColor(color));
+			settings.setValue("fillColor", JSONColorString(color));
 			if(polys.count())
 				polys.last()->setFillColor(color);
 			repaint();
@@ -45,14 +45,14 @@ class MainWindow : public QMainWindow
 
 		void setBGColor(QColor color){
 			QSettings settings;
-			settings.setValue("backgroundColor", JSONColor(color));
+			settings.setValue("backgroundColor", JSONColorString(color));
 			m_BGColor = color;
 			repaint();
 		}
 
 		void setLineColor(QColor color){
 			QSettings settings;
-			settings.setValue("lineColor", JSONColor(color));
+			settings.setValue("lineColor", JSONColorString(color));
 			m_lineColor = color;
 			if(lines.count())
 				lines.last()->setColor(color);
@@ -84,6 +84,8 @@ class MainWindow : public QMainWindow
 		}
 
 		void save();
+		void load();
+		void clear();
 
 	protected:
 		void changeEvent(QEvent *e);
@@ -101,6 +103,10 @@ class MainWindow : public QMainWindow
 		void on_actionDefault_Colors_triggered();
 
 		void on_actionSave_triggered();
+
+		void on_actionNew_triggered();
+
+		void on_actionOpen_triggered();
 
 	private:
 		Ui::MainWindow *ui;

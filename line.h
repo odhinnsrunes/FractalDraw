@@ -10,7 +10,8 @@
 #include <QJsonArray>
 
 QString JSONColorString(QColor color);
-QColor JSONColor(QString str);
+QColor JSONColorString(QString str);
+QColor JSONColor(QJsonObject obj);
 QJsonObject JSONColor(QColor color);
 
 #define SNAP_DISTANCE 10.0
@@ -31,7 +32,8 @@ class Line : public QObject
 		explicit Line(QObject *parent = 0, QColor newColor = QColor(0, 0, 0), unsigned int uiSeed = time(0));
 		explicit Line(const Line & oldLine);
 		explicit Line(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor = QColor(0, 0, 0), unsigned int uiSeed = time(0));
-		
+		explicit Line(QObject *parent, QJsonObject obj);
+
 		Line & operator=(const Line &rhs){
 			if (this == &rhs)
 				  return *this;
@@ -73,11 +75,12 @@ class Line : public QObject
 			s["y"] = (double)m_start.y();
 			obj["start"] = s;
 			QJsonObject e;
-			e["x"] = (double)m_start.x();
-			e["y"] = (double)m_start.y();
+			e["x"] = (double)m_end.x();
+			e["y"] = (double)m_end.y();
 			obj["end"] = e;
 			return obj;
 		}
+
 
 	signals:
 		void seedChanged(unsigned int);

@@ -26,29 +26,29 @@ MainWindow::MainWindow(QWidget *parent) :
 	borderWell = new ColorWell(ui->mainToolBar, tr("Border"));
 	borderWell->resize(64, 64);
 	defaultColor = JSONColorString(QColor(255, 240, 168));
-	qDebug() << "border: " << defaultColor;
-	borderWell->setColor(JSONColor(settings.value("borderColor", defaultColor).toString()));
+	qDebug() << "border: " << defaultColor; //<< JSONColorString(settings.value("borderColor", defaultColor).toString());
+	borderWell->setColor(JSONColorString(settings.value("borderColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(borderWell);
 
 	fillWell = new ColorWell(ui->mainToolBar, tr("Fill"));
 	fillWell->resize(64, 64);
 	defaultColor = JSONColorString(QColor(64, 128, 64));
-	fillWell->setColor(JSONColor(settings.value("fillColor", defaultColor).toString()));
+	fillWell->setColor(JSONColorString(settings.value("fillColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(fillWell);
 
 	backgroundWell = new ColorWell(ui->mainToolBar, tr("Back"));
 	backgroundWell->resize(64, 64);
 	defaultColor = JSONColorString(QColor(0, 64, 128));
-	backgroundWell->setColor(JSONColor(settings.value("backgroundColor", defaultColor).toString()));
+	backgroundWell->setColor(JSONColorString(settings.value("backgroundColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(backgroundWell);
 
 	lineWell = new ColorWell(ui->mainToolBar, tr("Lines"));
 	lineWell->resize(64, 64);
 	defaultColor = JSONColorString(QColor(0, 64, 128));
-	lineWell->setColor(JSONColor(settings.value("lineColor", defaultColor).toString()));
+	lineWell->setColor(JSONColorString(settings.value("lineColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(lineWell);
 
@@ -378,4 +378,56 @@ void MainWindow::save()
 void MainWindow::on_actionSave_triggered()
 {
 	save();
+}
+
+void MainWindow::load()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Drawing"), QString(), QString("Drawings (*.fdr)"));
+	if(!fileName.isEmpty()){
+		QFile file(fileName);
+		if(file.open(QFile::ReadOnly)){
+			QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+			QJsonObject obj = doc.object();
+			clear();
+
+			QJsonArray jpolys = obj["polys"].toArray();
+			for(int i = 0; i < jpolys.count(); i++){
+				Polygon *newPoly = new Polygon(this, jpolys[i].toObject());
+				polys.append(newPoly);
+
+			}
+			QJsonArray jlines = obj["lines"].toArray();
+			for(int i = 0; i < jlines.count(); i++){
+				Line *newLine = new Line(this, jlines[i].toObject());
+				lines.append(newLine);
+			}
+
+			backgroundWell->setColor(JSONColor(obj["backgroundcolor"].toObject()));
+
+			borderWell->setColor(JSONColor(obj["bordercolor"].toObject()));
+
+			fillWell->setColor(JSONColor(obj["fillcolor"].toObject()));
+
+			lineWell->setColor(JSONColor(obj["linecolor"].toObject()));
+
+		}
+	}
+	repaint();
+}
+
+void MainWindow::clear()
+{
+	polys.clear();
+	lines.clear();
+	repaint();
+}
+
+void MainWindow::on_actionNew_triggered()
+{
+	clear();
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+	load();
 }

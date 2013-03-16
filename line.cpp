@@ -15,12 +15,23 @@ QString JSONColorString(QColor color){
 	return QString(doc.toJson());
 }
 
-QColor JSONColor(QString str){
+QColor JSONColorString(QString str){
+	qDebug() << "str " << str;
 	QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
 	QColor ret;
 	ret.setRed((int)doc.object()["red"].toDouble());
 	ret.setGreen((int)doc.object()["green"].toDouble());
 	ret.setBlue((int)doc.object()["blue"].toDouble());
+	return ret;
+}
+
+QColor JSONColor(QJsonObject obj){
+
+	QColor ret;
+	ret.setRed((int)obj["red"].toDouble());
+	ret.setGreen((int)obj["green"].toDouble());
+	ret.setBlue((int)obj["blue"].toDouble());
+	qDebug() << ret;
 	return ret;
 }
 
@@ -49,6 +60,15 @@ Line::Line(QObject *parent, QPointF newStart, QPointF newEnd, QColor newColor, u
 	m_start = newStart;
 	m_end = newEnd;
 	m_color = newColor;
+}
+
+Line::Line(QObject *parent, QJsonObject obj) :
+	QObject(parent)
+{
+	m_seed = (unsigned int)obj["seed"].toString().toLong();
+	m_start = QPointF(obj["start"].toObject()["x"].toDouble(), obj["start"].toObject()["y"].toDouble());
+	m_end = QPointF(obj["end"].toObject()["x"].toDouble(), obj["end"].toObject()["y"].toDouble());
+	m_color = JSONColor(obj["color"].toObject());
 }
 
 QPointF midPoint(QPointF point1, QPointF point2)

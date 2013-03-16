@@ -13,6 +13,7 @@ class Polygon : public QObject
 	public:
 		explicit Polygon(QObject *parent = 0, QColor color = QColor(0, 0, 0), QColor bgColor = QColor(0,0,0));
 		explicit Polygon(const Polygon& oldLine);
+		explicit Polygon(QObject *parent, QJsonObject obj);
 		~Polygon();
 
 		void addPoint(QPointF newPoint);
