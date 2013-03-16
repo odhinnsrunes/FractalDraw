@@ -11,6 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = FractalDraw
 TEMPLATE = app
 
+macx:ICON = images/FractalDraw.icns
 
 SOURCES += main.cpp\
         mainwindow.cpp \
