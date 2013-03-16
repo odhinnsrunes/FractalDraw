@@ -62,6 +62,8 @@ Source: "C:\work\git\FractalDraw\FractalDraw-build-QT5_MySql-Release\release\Qt5
 Source: "C:\work\git\FractalDraw\FractalDraw-build-QT5_MySql-Release\release\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\git\FractalDraw\FractalDraw-build-QT5_MySql-Release\release\Qt5Svg.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\work\git\FractalDraw\FractalDraw-build-QT5_MySql-Release\release\platforms\qwindows.dll"; DestDir: "{app}\platforms"; Flags: ignoreversion
+Source: "README.txt"; DestDir: "{app}"; Flags: ignoreversion isreadme
+Source: "license.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
