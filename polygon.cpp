@@ -127,3 +127,14 @@ QPointF Polygon::closestTo(QPointF testPoint)
 	return ret;
 }
 
+QJsonObject Polygon::save(){
+	QJsonObject obj;
+	QJsonArray jlines;
+	for(int i = 0; i < lines.count(); i++){
+		jlines.append(lines[i].save());
+	}
+	obj["lines"] = jlines;
+	obj["color"] = JSONColor(m_color);
+	obj["fillcolor"] = JSONColor(m_fillColor);
+	return obj;
+}

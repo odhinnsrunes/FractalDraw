@@ -58,6 +58,8 @@ class Polygon : public QObject
 			return QPointF(0.0, 0.0);
 		}
 
+		QJsonObject save();
+
 	signals:
 		void colorChanged(QColor);
 		void fillColorChanged(QColor);

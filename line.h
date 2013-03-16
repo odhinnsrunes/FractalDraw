@@ -5,6 +5,13 @@
 #include <QPolygon>
 #include <QtCore/qmath.h>
 #include <QPainter>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+QString JSONColorString(QColor color);
+QColor JSONColor(QString str);
+QJsonObject JSONColor(QColor color);
 
 #define SNAP_DISTANCE 10.0
 
@@ -56,6 +63,21 @@ class Line : public QObject
 		QRectF boundingRect();
 
 		void paint(QPainter & painter) const ;
+
+		QJsonObject save(){
+			QJsonObject obj;
+			obj["color"] = JSONColor(m_color);
+			obj["seed"] = QString("%1").arg(m_seed);
+			QJsonObject s;
+			s["x"] = (double)m_start.x();
+			s["y"] = (double)m_start.y();
+			obj["start"] = s;
+			QJsonObject e;
+			e["x"] = (double)m_start.x();
+			e["y"] = (double)m_start.y();
+			obj["end"] = e;
+			return obj;
+		}
 
 	signals:
 		void seedChanged(unsigned int);

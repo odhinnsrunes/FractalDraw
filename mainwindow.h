@@ -12,11 +12,6 @@
 #include <QAction>
 #include <QCheckBox>
 #include <QSettings>
-#include <QJsonDocument>
-#include <QJsonObject>
-
-QString JSONColor(QColor color);
-QColor JSONColor(QString str);
 
 namespace Ui {
 class MainWindow;
@@ -88,6 +83,8 @@ class MainWindow : public QMainWindow
 			aDrawPolys->setChecked(!bChecked);
 		}
 
+		void save();
+
 	protected:
 		void changeEvent(QEvent *e);
 		void paintEvent ( QPaintEvent * event );
@@ -102,6 +99,8 @@ class MainWindow : public QMainWindow
 		void showBackgroundChanged(bool bSetTo);
 
 		void on_actionDefault_Colors_triggered();
+
+		void on_actionSave_triggered();
 
 	private:
 		Ui::MainWindow *ui;

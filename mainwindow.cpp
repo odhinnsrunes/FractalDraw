@@ -5,24 +5,6 @@
 #include <QtSvg>
 #include <QSvgGenerator>
 
-QString JSONColor(QColor color){
-	QJsonObject obj;
-	obj["red"] = color.red();
-	obj["green"] = color.green();
-	obj["blue"] = color.blue();
-	QJsonDocument doc = QJsonDocument(obj);
-	return QString(doc.toJson());
-}
-
-QColor JSONColor(QString str){
-	QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
-	QColor ret;
-	ret.setRed((int)doc.object()["red"].toDouble());
-	ret.setGreen((int)doc.object()["green"].toDouble());
-	ret.setBlue((int)doc.object()["blue"].toDouble());
-	return ret;
-}
-
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -43,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	borderWell = new ColorWell(ui->mainToolBar, tr("Border"));
 	borderWell->resize(64, 64);
-	defaultColor = JSONColor(QColor(255, 240, 168));
+	defaultColor = JSONColorString(QColor(255, 240, 168));
 	qDebug() << "border: " << defaultColor;
 	borderWell->setColor(JSONColor(settings.value("borderColor", defaultColor).toString()));
 
@@ -51,21 +33,21 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	fillWell = new ColorWell(ui->mainToolBar, tr("Fill"));
 	fillWell->resize(64, 64);
-	defaultColor = JSONColor(QColor(64, 128, 64));
+	defaultColor = JSONColorString(QColor(64, 128, 64));
 	fillWell->setColor(JSONColor(settings.value("fillColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(fillWell);
 
 	backgroundWell = new ColorWell(ui->mainToolBar, tr("Back"));
 	backgroundWell->resize(64, 64);
-	defaultColor = JSONColor(QColor(0, 64, 128));
+	defaultColor = JSONColorString(QColor(0, 64, 128));
 	backgroundWell->setColor(JSONColor(settings.value("backgroundColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(backgroundWell);
 
 	lineWell = new ColorWell(ui->mainToolBar, tr("Lines"));
 	lineWell->resize(64, 64);
-	defaultColor = JSONColor(QColor(0, 64, 128));
+	defaultColor = JSONColorString(QColor(0, 64, 128));
 	lineWell->setColor(JSONColor(settings.value("lineColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(lineWell);
@@ -364,4 +346,36 @@ void MainWindow::on_actionDefault_Colors_triggered()
 	backgroundWell->setColor(QColor(0, 64, 128));
 	setLineColor(QColor(0, 64, 128));
 	lineWell->setColor(QColor(0, 64, 128));
+}
+
+void MainWindow::save()
+{
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Drawing"), QString(), QString("Drawings (*.fdr)"));
+	if(!fileName.isEmpty()){
+		QJsonObject obj;
+		obj["backgroundcolor"] = JSONColor(m_BGColor);
+		obj["bordercolor"] = JSONColor(m_borderColor);
+		obj["fillcolor"] = JSONColor(m_fillColor);
+		obj["linecolor"] = JSONColor(m_lineColor);
+		QJsonArray jpolys;
+		for(int i = 0; i < polys.count(); i++){
+			jpolys.append(polys[i]->save());
+		}
+		QJsonArray jlines;
+		for(int i = 0; i < lines.count(); i++){
+			jlines.append(lines[i]->save());
+		}
+		obj["polys"] = jpolys;
+		obj["lines"] = jlines;
+		QJsonDocument doc = QJsonDocument(obj);
+		QFile file(fileName);
+		if(file.open(QFile::WriteOnly)){
+			file.write(doc.toJson());
+		}
+	}
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+	save();
 }

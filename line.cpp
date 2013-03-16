@@ -2,6 +2,28 @@
 #include <QDebug>
 #include <QMatrix>
 
+QJsonObject JSONColor(QColor color){
+	QJsonObject obj;
+	obj["red"] = color.red();
+	obj["green"] = color.green();
+	obj["blue"] = color.blue();
+	return obj;
+}
+
+QString JSONColorString(QColor color){
+	QJsonDocument doc = QJsonDocument(JSONColor(color));
+	return QString(doc.toJson());
+}
+
+QColor JSONColor(QString str){
+	QJsonDocument doc = QJsonDocument::fromJson(str.toUtf8());
+	QColor ret;
+	ret.setRed((int)doc.object()["red"].toDouble());
+	ret.setGreen((int)doc.object()["green"].toDouble());
+	ret.setBlue((int)doc.object()["blue"].toDouble());
+	return ret;
+}
+
 Line::Line(QObject *parent, QColor newColor, unsigned int uiSeed) :
 	QObject(parent)
 {
