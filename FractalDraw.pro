@@ -24,3 +24,6 @@ HEADERS  += mainwindow.h \
     colorwell.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resources.qrc

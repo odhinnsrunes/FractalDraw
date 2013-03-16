@@ -23,6 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	QString defaultColor;
 
+	ui->mainToolBar->setIconSize(QSize(64,64));
+
+	QLabel *colorLabel = new QLabel(tr("Colors"));
+	ui->mainToolBar->addWidget(colorLabel);
+
 	borderWell = new ColorWell(ui->mainToolBar, tr("Border"));
 	borderWell->resize(64, 64);
 	defaultColor = JSONColorString(QColor(255, 240, 168));
@@ -51,6 +56,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->mainToolBar->addWidget(lineWell);
 
+	ui->mainToolBar->addSeparator();
+
+	QLabel *toolLabel = new QLabel(tr("Style"));
+	ui->mainToolBar->addWidget(toolLabel);
+
 	connect(borderWell, SIGNAL(colorChanged(QColor)), this, SLOT(setColor(QColor)));
 	connect(fillWell, SIGNAL(colorChanged(QColor)), this, SLOT(setFillColor(QColor)));
 	connect(backgroundWell, SIGNAL(colorChanged(QColor)), this, SLOT(setBGColor(QColor)));
@@ -61,15 +71,21 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_fillColor = fillWell->color();
 	m_lineColor = lineWell->color();
 
-	aDrawPolys = ui->mainToolBar->addAction(tr("Draw Polys"));
+
+	aDrawPolys = ui->mainToolBar->addAction(QIcon(":/images/icon.png"), tr("Draw Polys"));
 	aDrawPolys->setCheckable(true);
 	aDrawPolys->setChecked(true);
 	connect(aDrawPolys, SIGNAL(toggled(bool)), this, SLOT(drawPolys(bool)));
 
-	aDrawLines = ui->mainToolBar->addAction(tr("Draw Lines"));
+	aDrawLines = ui->mainToolBar->addAction(QIcon(":/images/icon2.png"), tr("Draw Lines"));
 	aDrawLines->setCheckable(true);
 	aDrawLines->setChecked(false);
 	connect(aDrawLines, SIGNAL(toggled(bool)), this, SLOT(drawLines(bool)));
+
+	ui->mainToolBar->addSeparator();
+
+	QLabel *optionLabel = new QLabel(tr("Options"));
+	ui->mainToolBar->addWidget(optionLabel);
 
 	chFillPolys = new QCheckBox(tr("Fill Polys"), ui->mainToolBar);
 	chFillPolys->setChecked(settings.value("fillPolys", true).toBool());
