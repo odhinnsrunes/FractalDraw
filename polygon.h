@@ -25,8 +25,15 @@ class Polygon : public QObject
 		}
 
 		void setLastSeed(unsigned int seed){
-			if(lines.count())
-				lines.last().setSeed(seed);
+			if(lines.count()){
+				if(lines.last().length() > 0){
+					lines.last().setSeed(seed);
+				} else {
+					if(lines.count() > 1){
+						lines[lines.count() - 2].setSeed(seed);
+					}
+				}
+			}
 		}
 
 		QPointF closestTo(QPointF testPoint);

@@ -45,6 +45,10 @@ class Line : public QObject
 			return *this;
 		}
 
+		qreal length(){
+			return distance(m_start, m_end);
+		}
+
 		unsigned int seed() const { return m_seed; }
 		QPointF start() const { return m_start; }
 		QPointF end() const { return m_end; }
