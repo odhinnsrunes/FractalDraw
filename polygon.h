@@ -51,7 +51,7 @@ class Polygon : public QObject
 
 		QRectF boundingRect();
 
-		void paint(QPainter & painter, bool bFill);
+		void paint(QPainter & painter, bool bFill, bool bOutline);
 		QColor color() const { return m_color; }
 		QColor fillColor() const { return m_fillColor; }
 

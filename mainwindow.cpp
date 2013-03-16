@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	borderWell = new ColorWell(ui->mainToolBar, tr("Border"));
 	borderWell->resize(64, 64);
 	defaultColor = JSONColorString(QColor(255, 240, 168));
-	qDebug() << "border: " << defaultColor; //<< JSONColorString(settings.value("borderColor", defaultColor).toString());
 	borderWell->setColor(JSONColorString(settings.value("borderColor", defaultColor).toString()));
 
 	ui->mainToolBar->addWidget(borderWell);
@@ -77,6 +76,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(chFillPolys, SIGNAL(clicked(bool)), this, SLOT(fillPolysChanged(bool)));
 	ui->mainToolBar->addWidget(chFillPolys);
 
+	chOutlinePolys = new QCheckBox(tr("Outline Polys"), ui->mainToolBar);
+	chOutlinePolys->setChecked(settings.value("outlinePolys", true).toBool());
+	connect(chOutlinePolys, SIGNAL(clicked(bool)), this, SLOT(outlinePolysChanged(bool)));
+	ui->mainToolBar->addWidget(chOutlinePolys);
+
 	chShowBackground = new QCheckBox(tr("Show Background"), ui->mainToolBar);
 	chShowBackground->setChecked(settings.value("showBackground", true).toBool());
 	connect(chShowBackground, SIGNAL(clicked(bool)), this, SLOT(showBackgroundChanged(bool)));
@@ -119,7 +123,7 @@ void MainWindow::paint(QPainter &painter)
 	if(chShowBackground->isChecked())
 		painter.fillRect(this->rect(), m_BGColor);
 	for(int i = 0; i < polys.count(); i++){
-		polys[i]->paint(painter, chFillPolys->isChecked());
+		polys[i]->paint(painter, chFillPolys->isChecked(), chOutlinePolys->isChecked());
 	}
 	for(int i = 0; i < lines.count(); i++){
 		lines[i]->paint(painter);
@@ -346,6 +350,17 @@ void MainWindow::fillPolysChanged(bool bSetTo)
 {
 	QSettings settings;
 	settings.setValue("fillPolys", bSetTo);
+	if(bSetTo == false && chOutlinePolys->isChecked() == false)
+		chOutlinePolys->setChecked(true);
+	repaint();
+}
+
+void MainWindow::outlinePolysChanged(bool bSetTo)
+{
+	QSettings settings;
+	settings.setValue("outlinePolys", bSetTo);
+	if(bSetTo == false && chFillPolys->isChecked() == false)
+		chFillPolys->setChecked(true);
 	repaint();
 }
 

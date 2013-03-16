@@ -100,6 +100,7 @@ class MainWindow : public QMainWindow
 		void on_actionExport_to_SVG_triggered();
 		void fillPolysChanged(bool bSetTo);
 		void showBackgroundChanged(bool bSetTo);
+		void outlinePolysChanged(bool bSetTo);
 
 		void on_actionDefault_Colors_triggered();
 
@@ -131,6 +132,7 @@ class MainWindow : public QMainWindow
 
 		QCheckBox * chShowBackground;
 		QCheckBox * chFillPolys;
+		QCheckBox * chOutlinePolys;
 
 		bool bDrawPolys;
 };
