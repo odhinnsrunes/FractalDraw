@@ -156,8 +156,9 @@ void MainWindow::saveSvg()
 
 	QSvgGenerator generator;
 	generator.setFileName(newPath);
-	QRectF rectf = polys.last()->boundingRect();
-	QRect rect(qRound(rectf.top()), qRound(rectf.left()), qRound(rectf.width()), qRound(rectf.height()));
+	//QRectF rectf = polys.last()->boundingRect();
+	//QRect rect(qRound(rectf.top()), qRound(rectf.left()), qRound(rectf.width()), qRound(rectf.height()));
+	QRect rect = this->rect();
 	generator.setSize(QSize(rect.width(), rect.height()));
 	generator.setViewBox(rect);
 	generator.setTitle(tr("SVG Generator Example Drawing"));
