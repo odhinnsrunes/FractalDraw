@@ -114,8 +114,6 @@ class MainWindow : public QMainWindow
 		QVector<Polygon*> polys;
 		QVector<Line *> lines;
 
-		QString path;
-
 		ColorWell * borderWell;
 		ColorWell * fillWell;
 		ColorWell * backgroundWell;

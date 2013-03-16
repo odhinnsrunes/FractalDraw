@@ -139,16 +139,19 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
 void MainWindow::saveSvg()
 {
+	QSettings settings;
+	QString lastFile = settings.value("lastsvg", "").toString();
+
 	QString newPath = QFileDialog::getSaveFileName(this, tr("Save SVG"),
-		path, tr("SVG files (*.svg)"));
+		lastFile, tr("SVG files (*.svg)"));
 
 	if (newPath.isEmpty())
 		return;
 
-	path = newPath;
+	settings.setValue("lastsvg", newPath);
 
 	QSvgGenerator generator;
-	generator.setFileName(path);
+	generator.setFileName(newPath);
 	QRectF rectf = polys.last()->boundingRect();
 	QRect rect(qRound(rectf.top()), qRound(rectf.left()), qRound(rectf.width()), qRound(rectf.height()));
 	generator.setSize(QSize(rect.width(), rect.height()));
